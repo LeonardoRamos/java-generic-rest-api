@@ -1,0 +1,82 @@
+# JavaGenericRestApi
+
+API Rest developed using *Java*. Its purpose is to serve as a lib to make it easier to provide and serve data from any API that uses it as a framework.
+
+
+## Setting up
+
+To test the project locally, simply clone the repository and import into *Eclipse* (or any other IDE of your choice) as a *Gradle* project.
+After that, you will need to run the `gradle` build and run the project using the IDE.
+
+
+## API
+
+The API accepts filters, sorting, aggregation functions, grouping and field projection.
+For authentications, it was used JWT.
+
+
+### Filter
+The available options of filters to be applied:
+
+- Equals: "=eq=" or "=" (may be used to compare if value is equal to `null`)
+
+- Less than or equal: "=le=" or "<="
+
+- Greater than or equal: "=ge=" or ">="
+
+- Greater than: "=gt=" or ">"
+
+- Less than: "=lt=" or "<"
+
+- Not equal: "=ne=" or "!=" (may be used to compare if the value is other than `null`)
+
+- In: "=in="
+
+- Out: "=out="
+
+- Like: "=like="
+
+Logical operators in the url:
+
+- AND: "\_and\_" or just ";"
+- OR: "\_or\_" or just ","
+
+### Projection
+The Projection follows the following syntax, and the json response will only have with the specified fields:
+
+`projection = [field1, field2, field3...]`
+
+### Sort
+The Sorting follows the following syntax (where `sortOrder` may be `asc` or `desc`):
+
+`sort = [field1 = sortOrder, field2 = sortOrder...]`
+
+### GroupBy
+GroupBy follows the following syntax (*groupBy* does not accept *projections* parameters and respects the limitations of the DBMS in these specified cases):
+
+`groupBy = [field1, field2, field3...]`
+
+### Sum
+It performs Sum function in the specified fields, and follows the following syntax:
+
+`sum = [field1, field2, field3...]`
+
+### Avg
+It performs function of Avg in the specified fields, and follows the following syntax:
+
+`avg = [field1, field2, field3...]`
+
+### Count
+It performs Count function in the specified fields, and follows the following syntax:
+
+`count = [field1, field2, field3...]`
+
+### Count Distinct
+It performs Count Distinct function in the specified fields, and follows the following syntax:
+
+`count_distinct = [field1, field2, field3...]`
+
+### Extra Parameters
+- offset (DEFAULT_OFFSET = 0)
+- limit (DEFAULT_LIMIT = 20 and MAX_LIMIT = 100)
+
