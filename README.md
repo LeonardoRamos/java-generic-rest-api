@@ -6,13 +6,13 @@ API Rest developed using *Java*. Its purpose is to serve as a lib to make it eas
 ## Setting up
 
 To test the project locally, simply clone the repository and import into *Eclipse* (or any other IDE of your choice) as a *Gradle* project.
-After that, you will need to run the `gradle` build and run the project using the IDE.
+After that, you will need to run `gradle` build and run the project using the IDE.
 
 
 ## API
 
 The API accepts filters, sorting, aggregation functions, grouping and field projection.
-For authentications, it was used JWT.
+For authentications, it uses JWT.
 
 
 ### Filter
@@ -40,6 +40,9 @@ Logical operators in the url:
 
 - AND: "\_and\_" or just ";"
 - OR: "\_or\_" or just ","
+
+
+`filter = [field1=value,field2=like=value2;field3!=value3...]`
 
 ### Projection
 The Projection follows the following syntax, and the json response will only have with the specified fields:
