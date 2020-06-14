@@ -77,7 +77,7 @@ It performs Count function in the specified fields, and follows the following sy
 ### Count Distinct
 It performs Count Distinct function in the specified fields, and follows the following syntax:
 
-`count_distinct = [field1, field2, field3...]`
+`countDistinct = [field1, field2, field3...]`
 
 ### Extra Parameters
 - offset (DEFAULT_OFFSET = 0)
