@@ -1,0 +1,78 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath('org.springframework.boot:spring-boot-gradle-plugin:1.5.9.RELEASE') 
+    }
+}
+
+version = '0.0.1-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'eclipse-wtp'
+apply plugin: 'idea' 
+apply plugin: 'org.springframework.boot' 
+
+def mainClassName = 'com.generic.rest.api.JavaGenericRestApiApplication'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+	//spring
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.springframework.boot:spring-boot-starter-actuator')
+    compile('org.springframework.boot:spring-boot-starter-data-rest')
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile("org.springframework.boot:spring-boot-starter-security")
+    compile('org.springframework.boot:spring-boot-starter-mail')
+	compile('org.springframework:spring-test')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    
+    //database
+    compile('org.postgresql:postgresql:42.2.2')
+    
+    //jwt
+	compile('io.jsonwebtoken:jjwt:0.9.0')
+	
+    //util
+    compile('com.google.guava:guava:27.1-jre')
+    compile('org.apache.tika:tika-core:1.20')
+}
+
+eclipse {
+    classpath {
+         containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.9'
+}
+
+jar {
+  	manifest {
+    	attributes(
+      		'Main-Class': "$mainClassName"
+    	)
+  	}
+  	zip64 = true
+	from {
+    	configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+  	}
+  	baseName 'java-generic-rest-api'
+}
+
+bootRepackage {
+    mainClass = "$mainClassName"
+}
+
+springBoot {
+    mainClass = "$mainClassName"
+    executable = true
+}
