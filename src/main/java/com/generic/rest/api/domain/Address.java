@@ -9,6 +9,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.generic.rest.api.domain.core.BaseApiEntity;
 
 @Entity
@@ -29,6 +30,12 @@ public class Address extends BaseApiEntity {
 	@JoinColumn(name = "id_country")
 	private Country country;
 	
+	@OneToOne
+	@Cascade(CascadeType.SAVE_UPDATE)
+	@JoinColumn(name = "id_user")
+	@JsonBackReference
+	private User user;
+	
 	public Address() {}
 	
 	public Address(AddressBuilder builder) {
@@ -36,6 +43,7 @@ public class Address extends BaseApiEntity {
 		this.streetNumber = builder.streetNumber;
 		this.state = builder.state;
 		this.country = builder.country;
+		this.user = builder.user;
 		this.setId(builder.getId());
 		this.setSlug(builder.getSlug());
 		this.setActive(builder.getActive());
@@ -79,6 +87,14 @@ public class Address extends BaseApiEntity {
 	public void setCountry(Country country) {
 		this.country = country;
 	}
+	
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
 
 	public static AddressBuilder builder() {
 		return new AddressBuilder();
@@ -90,6 +106,7 @@ public class Address extends BaseApiEntity {
 		private String streetNumber;
 		private String state;
 		private Country country;
+		private User user;
 		
 		public AddressBuilder street(String street) {
 			this.street = street;
@@ -108,6 +125,11 @@ public class Address extends BaseApiEntity {
 		
 		public AddressBuilder country(Country country) {
 			this.country = country;
+			return this;
+		}
+		
+		public AddressBuilder user(User user) {
+			this.user = user;
 			return this;
 		}
 		

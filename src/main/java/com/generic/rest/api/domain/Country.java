@@ -7,7 +7,7 @@ import javax.persistence.Table;
 import com.generic.rest.api.domain.core.BaseApiEntity;
 
 @Entity
-@Table(name = "address")
+@Table(name = "country")
 public class Country extends BaseApiEntity {
 	
 	@Column(name = "name")
