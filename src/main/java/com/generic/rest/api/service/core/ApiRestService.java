@@ -9,25 +9,22 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.generic.rest.api.Constants;
 import com.generic.rest.api.Constants.MSG_ERROR;
-import com.generic.rest.api.domain.Role;
 import com.generic.rest.api.domain.core.ApiMetadata;
 import com.generic.rest.api.domain.core.ApiResponse;
 import com.generic.rest.api.domain.core.BaseApiEntity;
 import com.generic.rest.api.domain.core.filter.RequestFilter;
 import com.generic.rest.api.exception.ApiException;
 import com.generic.rest.api.exception.NotFoundApiException;
-import com.generic.rest.api.repository.core.ApiFilterRepository;
+import com.generic.rest.api.repository.core.ApiRepository;
 import com.generic.rest.api.repository.core.BaseRepository;
 import com.generic.rest.api.util.KeyUtils;
-import com.generic.rest.api.util.TokenUtils;
 
 @Service
 public abstract class ApiRestService<ENTITY extends BaseApiEntity, REPOSITORY extends BaseRepository<ENTITY>> {
 	
 	@Autowired
-	private ApiFilterRepository<ENTITY> apiFilterRepository;
+	private ApiRepository<ENTITY> apiRepository;
 	
 	@Autowired
 	protected TokenAuthenticationService tokenAuthenticationService;
@@ -66,11 +63,11 @@ public abstract class ApiRestService<ENTITY extends BaseApiEntity, REPOSITORY ex
 	}
 	
 	public Long countAll(RequestFilter requestFilter) throws ApiException {
-		return apiFilterRepository.countAll(getEntityClass(), requestFilter);
+		return apiRepository.countAll(getEntityClass(), requestFilter);
 	}
 	
 	public List<ENTITY> findAllRecords(RequestFilter requestFilter) throws ApiException {
-		return apiFilterRepository.findAll(getEntityClass(), requestFilter);
+		return apiRepository.findAll(getEntityClass(), requestFilter);
 	}
 	
 	public Page<ENTITY> findAll(Pageable pageable) {
@@ -124,20 +121,6 @@ public abstract class ApiRestService<ENTITY extends BaseApiEntity, REPOSITORY ex
    		entity.setDeleteDate(null);
 
 	   	return (ENTITY) getRepository().saveAndFlush(entity);
-   	}
-	
-   	public Boolean allowUserAccess(String authorization, String userAccountSlug) {
-   		String token = TokenUtils.getTokenFromAuthorizationHeader(authorization);
-   		String userAccountSlugClaim = tokenAuthenticationService.getTokenClaim(token, Constants.JWT_AUTH.CLAIM_USER_SLUG);
-		
-   		return userAccountSlug.equals(userAccountSlugClaim) || allowAdminAccess(authorization);
-   	}
-	
-   	public Boolean allowAdminAccess(String authorization) {
-   		String token = TokenUtils.getTokenFromAuthorizationHeader(authorization);
-   		String roleClaim = tokenAuthenticationService.getTokenClaim(token, Constants.JWT_AUTH.CLAIM_ROLE);
-		
-   		return Role.ADMIN.name().equals(roleClaim);
    	}
 	
 }
