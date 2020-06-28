@@ -41,7 +41,7 @@ public class ApiResultMapper<ENTITY extends BaseApiEntity> {
 			
 			if (row != null) {
 				if (Object[].class.equals(row.getClass())) {
-					mapSimpleValuesProjection(entityClass, projection, entities, row);
+					mapSimpleValuesSelection(entityClass, projection, entities, row);
 					
 				} else if (entityClass.equals(row.getClass())) {
 					mapEntityObject(entityClass, projection, entities, row);
@@ -55,7 +55,7 @@ public class ApiResultMapper<ENTITY extends BaseApiEntity> {
 		return entities;
 	}
 	
-	private void mapSimpleValuesProjection(Class<ENTITY> entityClass, List<Selection<? extends Object>> projection,
+	private void mapSimpleValuesSelection(Class<ENTITY> entityClass, List<Selection<? extends Object>> projection,
 			List<ENTITY> entities, Object row) throws Exception {
 		
 		Object[] fieldData = (Object[]) row;
