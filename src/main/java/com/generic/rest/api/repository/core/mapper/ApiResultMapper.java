@@ -6,10 +6,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Stack;
 
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Selection;
@@ -66,35 +70,32 @@ public class ApiResultMapper<ENTITY extends BaseApiEntity> {
 				Path<Object> attributePath = (Path<Object>) aggregationFunction.getArgumentExpressions().get(0);
 				
 				if (AggregateFunction.isCountFunction(aggregationFunction.getFunctionName())) {
-					object.getCount().put(attributePath.getAlias(), (Long) fieldData[i]);
-					
-				} else if (AggregateFunction.isCountDistinctFunction(aggregationFunction.getFunctionName())) {
-					object.getCountDistinct().put(attributePath.getAlias(), (Long) fieldData[i]);
+					object.addCount(mapAggregationField(entityClass, (Long) fieldData[i], attributePath));
 					
 				} else if (AggregateFunction.isSumFunction(aggregationFunction.getFunctionName())) {
 					if (fieldData[i].getClass().equals(Double.class)) {
-						object.getSum().put(attributePath.getAlias(), BigDecimal.valueOf((Double) fieldData[i]));
+						object.addSum(mapAggregationField(entityClass, BigDecimal.valueOf((Double) fieldData[i]), attributePath));
 					} else {
-						object.getSum().put(attributePath.getAlias(), BigDecimal.valueOf((Long) fieldData[i]));
+						object.addSum(mapAggregationField(entityClass, (Long) fieldData[i], attributePath));
 					}
 					
 				} else if (AggregateFunction.isAvgFunction(aggregationFunction.getFunctionName())) {
 					if (fieldData[i].getClass().equals(Double.class)) {
-						object.getAvg().put(attributePath.getAlias(), BigDecimal.valueOf((Double) fieldData[i]));
+						object.addAvg(mapAggregationField(entityClass, BigDecimal.valueOf((Double) fieldData[i]), attributePath));
 					} else {
-						object.getAvg().put(attributePath.getAlias(), BigDecimal.valueOf((Long) fieldData[i]));
+						object.addAvg(mapAggregationField(entityClass, (Long) fieldData[i], attributePath));
 					}
 				}
 				
 			} else {
 				Path<Object> attributePath = (Path<Object>) projection.get(i);
-				setProjectionAggregationField(entityClass, fieldData[i], object, attributePath);
+				mapProjectionField(entityClass, fieldData[i], attributePath, object);
 			}
 		}
 		
 		entities.add(object);
 	}
-
+	
 	private void mapMultivaluedValuesProjection(Class<ENTITY> entityClass, List<Selection<? extends Object>> projection,
 			List<ENTITY> entities, Object row)
 			throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
@@ -146,46 +147,110 @@ public class ApiResultMapper<ENTITY extends BaseApiEntity> {
 			
 			if (AggregateFunction.isCountFunction(aggregationFunction.getFunctionName()) ||
 					AggregateFunction.isCountDistinctFunction(aggregationFunction.getFunctionName())) {
-				object.getCount().put(attributePath.getAlias(), (Long) row);
-				
-			} else if (AggregateFunction.isCountDistinctFunction(aggregationFunction.getFunctionName())) {
-				object.getCountDistinct().put(attributePath.getAlias(), (Long) row);
+				object.addCount(mapAggregationField(entityClass, (Long) row, attributePath));
 				
 			} else if (AggregateFunction.isSumFunction(aggregationFunction.getFunctionName())) {
-				object.getSum().put(attributePath.getAlias(), (BigDecimal) row);
+				if (row.getClass().equals(Double.class)) {
+					object.addSum(mapAggregationField(entityClass, BigDecimal.valueOf((Double) row), attributePath));
+				} else {
+					object.addSum(mapAggregationField(entityClass, (Long) row, attributePath));
+				}
 				
 			} else if (AggregateFunction.isAvgFunction(aggregationFunction.getFunctionName())) {
-				object.getAvg().put(attributePath.getAlias(), new BigDecimal((Double) row));
+				if (row.getClass().equals(Double.class)) {
+					object.addAvg(mapAggregationField(entityClass, BigDecimal.valueOf((Double) row), attributePath));
+				} else {
+					object.addAvg(mapAggregationField(entityClass, (Long) row, attributePath));
+				}
 			}
 			
 		} else {
 			Path<Object> attributePath = (Path<Object>) projection.get(0);
-			setProjectionAggregationField(entityClass, row, object, attributePath);
+			mapProjectionField(entityClass, row, attributePath, object);
 		}
 		
 		entities.add(object);
 	}
 	
-	private void setProjectionAggregationField(Class<ENTITY> entityClass, Object fieldData, ENTITY object,
-			Path<Object> attributePath) throws Exception {
-		
-		if (attributePath.getParentPath() != null && !attributePath.getParentPath().getJavaType().equals(entityClass)) {
-			Constructor<?> constructorField = attributePath.getParentPath().getJavaType().getConstructor();
-			Object fieldObject = constructorField.newInstance();
-			
-			Field childField = ReflectionUtils.getEntityFieldByName(attributePath.getParentPath().getJavaType(), attributePath.getAlias());
-			childField.setAccessible(true);
-			setFieldValueResult(fieldData, fieldObject, childField);
-			
-			Field field = ReflectionUtils.getEntityFieldByName(entityClass, attributePath.getParentPath().getAlias());
-			field.setAccessible(true);
-			setFieldValueResult(fieldObject, object, field);
+	private void mapProjectionField(Class<ENTITY> entityClass, Object fieldData, Path<Object> attributePath, ENTITY object) throws Exception {
+		Stack<Map<String, Class>> fieldPaths = buildNestedFieldStack(entityClass, attributePath);
 
+		Map<String, Class> rootFielddMap = fieldPaths.pop();
+		Map.Entry<String, Class> rootFieldEntry = rootFielddMap.entrySet().iterator().next();
+		
+		if (fieldPaths.isEmpty()) {
+			Field fieldRoot = ReflectionUtils.getEntityFieldByName(entityClass, rootFieldEntry.getKey());
+			fieldRoot.setAccessible(true);
+			
+			setFieldValueResult(fieldData, object, fieldRoot);
+		
 		} else {
-			Field field = ReflectionUtils.getEntityFieldByName(entityClass, attributePath.getAlias());
-			field.setAccessible(true);
-			setFieldValueResult(fieldData, object, field);
+			Constructor<?> constructorRootField = rootFieldEntry.getValue().getConstructor();
+			Object rootObject = constructorRootField.newInstance();
+			
+			Field fieldRoot = ReflectionUtils.getEntityFieldByName(entityClass, rootFieldEntry.getKey());
+			fieldRoot.setAccessible(true);
+				
+			Object currentObject = rootObject;
+			
+			while (!fieldPaths.isEmpty()) {
+				Map<String, Class> fieldMap = fieldPaths.pop();
+				Map.Entry<String, Class> fieldEntry = fieldMap.entrySet().iterator().next();
+				
+				if (fieldPaths.isEmpty()) {
+					Field currentField = ReflectionUtils.getEntityFieldByName(currentObject.getClass(), fieldEntry.getKey());
+					currentField.setAccessible(true);
+					
+					setFieldValueResult(fieldData, currentObject, currentField);
+					
+				} else {
+					Constructor<?> constructorField = fieldEntry.getValue().getConstructor();
+					Object fieldObject = constructorField.newInstance();
+					
+					Field currentField = ReflectionUtils.getEntityFieldByName(currentObject.getClass(), fieldEntry.getKey());
+					currentField.setAccessible(true);
+					
+					setFieldValueResult(fieldObject, currentObject, currentField);
+				
+					currentObject = fieldObject;
+				}
+			}
+			
+			setFieldValueResult(rootObject, object, fieldRoot);
 		}
+	}
+
+	private Stack<Map<String, Class>> buildNestedFieldStack(Class<ENTITY> entityClass, Path<Object> attributePath) {
+		Stack<Map<String, Class>> fieldPaths = new Stack<>();
+		
+		do {
+			if (!entityClass.equals(attributePath.getJavaType())) {
+				fieldPaths.push(Collections.singletonMap(attributePath.getAlias(), attributePath.getJavaType()));
+			}
+			
+			attributePath = (Path<Object>) attributePath.getParentPath();
+			
+		} while (attributePath.getParentPath() != null);
+		
+		return fieldPaths;
+	}
+	
+	private Map<String, Object> mapAggregationField(Class<ENTITY> entityClass, Object fieldData, Path<Object> attributePath) throws Exception {
+		Map<String, Object> aggregation = new HashMap<>();
+		
+		do {
+			if (!entityClass.equals(attributePath.getJavaType())) {
+				aggregation = new HashMap<>();
+				aggregation.put(attributePath.getAlias(), fieldData);
+				
+				fieldData = aggregation;
+			}
+			
+			attributePath = (Path<Object>) attributePath.getParentPath();
+		
+		} while (attributePath.getParentPath() != null);
+		
+		return aggregation;
 	}
 
 	private void setFieldValueResult(Object fieldDataValue, Object object, Field field) throws Exception {
@@ -212,5 +277,5 @@ public class ApiResultMapper<ENTITY extends BaseApiEntity> {
 			field.set(object, fieldDataValue);
 		}
 	}
-
+	
 }

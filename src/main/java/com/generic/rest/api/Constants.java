@@ -22,7 +22,7 @@ public interface Constants {
 		public interface LOGIN {
 			final String EMAIL_FIELD = "email";
 			final String PASSWORD_FIELD = "password";
-			final String NAME = "login";
+			final String NAME = "auth/login";
 			final String PATH = PATH_SEPARATOR + NAME;
 		}
 
