@@ -44,10 +44,10 @@ public class ApiResultMapper<ENTITY extends BaseApiEntity> {
 					mapSimpleValuesProjection(entityClass, projection, entities, row);
 					
 				} else if (entityClass.equals(row.getClass())) {
-					mapMultivaluedValuesProjection(entityClass, projection, entities, row);
+					mapEntityObject(entityClass, projection, entities, row);
 					
 				} else {
-					mapSingleMultivaluedValueData(entityClass, projection, entities, row);
+					mapEntityValues(entityClass, projection, entities, row);
 				}
 			}
 		}
@@ -96,7 +96,7 @@ public class ApiResultMapper<ENTITY extends BaseApiEntity> {
 		entities.add(object);
 	}
 	
-	private void mapMultivaluedValuesProjection(Class<ENTITY> entityClass, List<Selection<? extends Object>> projection,
+	private void mapEntityObject(Class<ENTITY> entityClass, List<Selection<? extends Object>> projection,
 			List<ENTITY> entities, Object row)
 			throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		
@@ -135,7 +135,7 @@ public class ApiResultMapper<ENTITY extends BaseApiEntity> {
 		return Boolean.FALSE;
 	}
 
-	private void mapSingleMultivaluedValueData(Class<ENTITY> entityClass, List<Selection<? extends Object>> projection,
+	private void mapEntityValues(Class<ENTITY> entityClass, List<Selection<? extends Object>> projection,
 			List<ENTITY> entities, Object row) throws Exception {
 		
 		Constructor<?> constructor = entityClass.getConstructor();

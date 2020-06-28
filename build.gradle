@@ -42,7 +42,6 @@ dependencies {
 	
     //util
     compile('com.google.guava:guava:27.1-jre')
-    compile('org.apache.tika:tika-core:1.20')
 }
 
 eclipse {
