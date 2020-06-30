@@ -7,7 +7,7 @@ import org.springframework.boot.context.embedded.tomcat.TomcatConnectorCustomize
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.stereotype.Component;
 
-import com.generic.rest.api.Constants;
+import com.generic.rest.api.Constants.TOMCAT;
 
 @Component
 public class TomcatWebServerCustomizer implements EmbeddedServletContainerCustomizer {
@@ -20,8 +20,8 @@ public class TomcatWebServerCustomizer implements EmbeddedServletContainerCustom
                 
             	@Override
                 public void customize(Connector connector) {
-                    connector.setAttribute(Constants.RELAXED_SERVER_CHARS_KEY, Constants.RELAXED_SERVER_CHARS_VALUE);
-                    connector.setAttribute(Constants.RELAXED_SERVER_PATH_KEY, Constants.RELAXED_SERVER_PATH_VALUE);
+                    connector.setAttribute(TOMCAT.RELAXED_SERVER_CHARS_KEY, TOMCAT.RELAXED_SERVER_CHARS_VALUE);
+                    connector.setAttribute(TOMCAT.RELAXED_SERVER_PATH_KEY, TOMCAT.RELAXED_SERVER_PATH_VALUE);
                 }
             });
         }
