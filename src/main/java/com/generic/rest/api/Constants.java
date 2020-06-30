@@ -45,7 +45,6 @@ public interface Constants {
 		final String CLAIM_EMAIL = "email";
 		final String CLAIM_NAME = "name";
 		final String CLAIM_ROLE = "role";
-		final String CLAIM_INSTITUITION_NAME = "institutionName";
 		final String CLAIM_USER_SLUG = "userSlug";
 		final String TOKEN = "token";
 		final String BEARER = "Bearer";
