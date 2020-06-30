@@ -192,7 +192,7 @@ public class ApiResultMapper<ENTITY extends BaseApiEntity> {
 				
 				if (i == 0) {
 					setLastProjectionNestedField(currentData.getClass(), fieldData, currentData, fieldEntry);
-					setProjectionNEstedField(rootFieldData, entity, fieldRoot, fieldPaths);
+					setProjectionNestedField(rootFieldData, entity, fieldRoot, fieldPaths);
 					
 				} else {
 					Object currentFieldData = fieldEntry.getValue().getConstructor().newInstance();
@@ -207,7 +207,7 @@ public class ApiResultMapper<ENTITY extends BaseApiEntity> {
 		}
 	}
 	
-	private void setProjectionNEstedField(Object rootFieldData, Object entity, Field field, List<Map<String, Class>> fieldPaths) throws Exception {
+	private void setProjectionNestedField(Object rootFieldData, Object entity, Field field, List<Map<String, Class>> fieldPaths) throws Exception {
 		Object currentObject = entity;
 		Object currentProjectionObject = rootFieldData;
 		
