@@ -7,8 +7,6 @@ public interface Constants {
 	final String DATE_TIMEZONE = "UTC";
 	final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm'Z'";
 	final String NULL_VALUE = "null";
-	final String PROFILE_PROPERTY = "${spring.profiles.active:default}";
-	final String DEFAULT_PROFILE = "default";
 	
 	public interface TOMCAT {
 		final String RELAXED_SERVER_CHARS_KEY = "relaxedQueryChars";
@@ -36,9 +34,6 @@ public interface Constants {
 		public interface USER {
 			final String NAME = "users";
 			final String PATH = BASE_PATH + NAME;
-
-			final String SYNC_NAME = "sync";
-			final String SYNC_PATH = SLUG_PATH + PATH_SEPARATOR + SYNC_NAME;
 		}
 	}
 
