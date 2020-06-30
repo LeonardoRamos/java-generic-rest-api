@@ -36,16 +36,6 @@ public class ReflectionUtils {
 		return values;
 	}
 	
-	public static void setEntityFieldByClass(Object parentEntity, Object childEntity, Class childEntityClass) throws IllegalArgumentException, IllegalAccessException {
-		for (Field field : parentEntity.getClass().getDeclaredFields()) {
-			if (field.getType().equals(childEntityClass)) {
-				field.setAccessible(true);
-				field.set(parentEntity, childEntity);
-				break;
-			}
-		}
-	}
-	
 	public static Field getEntityFieldByName(Class<?> clazz, String fieldName) throws NoSuchFieldException, SecurityException {
 		try {
 			return clazz.getDeclaredField(fieldName);
@@ -108,10 +98,6 @@ public class ReflectionUtils {
 		}
 		
 		return value;
-	}
-	
-	public static Object getObjectValueParsed(Object value, Class<?> clazz) throws JsonParseException, JsonMappingException, IOException {
-		return getEntityValueParsed(value.toString(), clazz);
 	}
 	
 }
