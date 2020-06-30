@@ -3,6 +3,7 @@ build/
 *.log
 .gradle
 
+target/
 bin/
 .springBeans
 .classpath

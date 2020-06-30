@@ -215,18 +215,25 @@ public class ApiResultMapper<ENTITY extends BaseApiEntity> {
 			Map.Entry<String, Class> fieldEntry = fieldPaths.get(i).entrySet().iterator().next();
 			
 			Field currentEntityField = ReflectionUtils.getEntityFieldByName(currentObject.getClass(), fieldEntry.getKey());
-			Field currentProjectionField = ReflectionUtils.getEntityFieldByName(currentProjectionObject.getClass(), fieldEntry.getKey());
-			
+			currentEntityField.setAccessible(true);
 			Object currentEntityData = currentEntityField.get(currentObject);
-			Object currentProjectionData = currentProjectionField.get(currentProjectionObject);
 			
 			if (currentEntityData == null) {
-				setFieldValue(currentProjectionData, currentObject, currentEntityField);
+				setFieldValue(currentProjectionObject, currentObject, currentEntityField);
 				break;
 			
 			} else {
 				currentObject = currentEntityData;
-				currentProjectionObject = currentProjectionData;
+				
+				if ((i - 1) >= 0) {
+					Map.Entry<String, Class> projectionEntry = fieldPaths.get(i - 1).entrySet().iterator().next();
+
+					Field currentProjectionField = ReflectionUtils.getEntityFieldByName(currentProjectionObject.getClass(), projectionEntry.getKey());
+					currentProjectionField.setAccessible(true);
+					Object currentProjectionData = currentProjectionField.get(currentProjectionObject);
+					
+					currentProjectionObject = currentProjectionData;
+				}
 			}
 		}
 	}
