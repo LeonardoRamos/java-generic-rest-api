@@ -29,6 +29,12 @@
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-devtools</artifactId>
+				</dependency>
+			</dependencies>
 		</profile>
 		<profile>
 			<id>prd</id>
@@ -44,11 +50,6 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 				
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-		</dependency>
-		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
