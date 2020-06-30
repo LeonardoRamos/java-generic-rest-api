@@ -29,7 +29,7 @@ public class User extends BaseApiEntity {
 	@Enumerated(EnumType.STRING)
 	private Role role;
 	
-	@OneToOne
+	@OneToOne(mappedBy = "user")
 	@Cascade(CascadeType.SAVE_UPDATE)
 	private Address address;
 	

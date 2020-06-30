@@ -113,5 +113,5 @@ public class ReflectionUtils {
 	public static Object getObjectValueParsed(Object value, Class<?> clazz) throws JsonParseException, JsonMappingException, IOException {
 		return getEntityValueParsed(value.toString(), clazz);
 	}
-
+	
 }

@@ -9,6 +9,10 @@ public interface Constants {
 	final String NULL_VALUE = "null";
 	final String PROFILE_PROPERTY = "${spring.profiles.active:default}";
 	final String DEFAULT_PROFILE = "default";
+	final String RELAXED_SERVER_CHARS_KEY = "relaxedQueryChars";
+	final String RELAXED_SERVER_CHARS_VALUE = "[]|{}^&#x5c;&#x60;&quot;&lt;&gt;";
+	final String RELAXED_SERVER_PATH_KEY = "relaxedPathChars";
+	final String RELAXED_SERVER_PATH_VALUE = "[]|";
 
 	public interface CONTROLLER {
 		final String VERSION = "v1";

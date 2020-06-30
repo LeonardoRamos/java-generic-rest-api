@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.Stack;
 
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Selection;
@@ -172,60 +171,78 @@ public class ApiResultMapper<ENTITY extends BaseApiEntity> {
 		entities.add(object);
 	}
 	
-	private void mapProjectionField(Class<ENTITY> entityClass, Object fieldData, Path<Object> attributePath, ENTITY object) throws Exception {
-		Stack<Map<String, Class>> fieldPaths = buildNestedFieldStack(entityClass, attributePath);
-
-		Map<String, Class> rootFielddMap = fieldPaths.pop();
-		Map.Entry<String, Class> rootFieldEntry = rootFielddMap.entrySet().iterator().next();
+	private void mapProjectionField(Class<ENTITY> entityClass, Object fieldData, Path<Object> attributePath, ENTITY entity) throws Exception {
+		List<Map<String, Class>> fieldPaths = buildNestedFields(entityClass, attributePath);
 		
-		if (fieldPaths.isEmpty()) {
-			Field fieldRoot = ReflectionUtils.getEntityFieldByName(entityClass, rootFieldEntry.getKey());
-			fieldRoot.setAccessible(true);
-			
-			setFieldValueResult(fieldData, object, fieldRoot);
+		Integer lastIndex = fieldPaths.size() - 1;
+		Map.Entry<String, Class> rootFieldEntry = fieldPaths.get(lastIndex--).entrySet().iterator().next();
+		
+		if (lastIndex < 0 && fieldPaths.size() == 1) {
+			setLastProjectionNestedField(entityClass, fieldData, entity, rootFieldEntry);
 		
 		} else {
-			Constructor<?> constructorRootField = rootFieldEntry.getValue().getConstructor();
-			Object rootObject = constructorRootField.newInstance();
-			
+			Object rootFieldData = rootFieldEntry.getValue().getConstructor().newInstance();
 			Field fieldRoot = ReflectionUtils.getEntityFieldByName(entityClass, rootFieldEntry.getKey());
 			fieldRoot.setAccessible(true);
-				
-			Object currentObject = rootObject;
 			
-			while (!fieldPaths.isEmpty()) {
-				Map<String, Class> fieldMap = fieldPaths.pop();
-				Map.Entry<String, Class> fieldEntry = fieldMap.entrySet().iterator().next();
+			Object currentData = rootFieldData;
+			
+			for (int i = lastIndex; i >= 0; i--) {
+				Map.Entry<String, Class> fieldEntry = fieldPaths.get(i).entrySet().iterator().next();
 				
-				if (fieldPaths.isEmpty()) {
-					Field currentField = ReflectionUtils.getEntityFieldByName(currentObject.getClass(), fieldEntry.getKey());
-					currentField.setAccessible(true);
-					
-					setFieldValueResult(fieldData, currentObject, currentField);
+				if (i == 0) {
+					setLastProjectionNestedField(currentData.getClass(), fieldData, currentData, fieldEntry);
+					setProjectionNEstedField(rootFieldData, entity, fieldRoot, fieldPaths);
 					
 				} else {
-					Constructor<?> constructorField = fieldEntry.getValue().getConstructor();
-					Object fieldObject = constructorField.newInstance();
-					
-					Field currentField = ReflectionUtils.getEntityFieldByName(currentObject.getClass(), fieldEntry.getKey());
+					Object currentFieldData = fieldEntry.getValue().getConstructor().newInstance();
+					Field currentField = ReflectionUtils.getEntityFieldByName(currentData.getClass(), fieldEntry.getKey());
 					currentField.setAccessible(true);
 					
-					setFieldValueResult(fieldObject, currentObject, currentField);
+					setFieldValue(currentFieldData, currentData, currentField);
 				
-					currentObject = fieldObject;
+					currentData = currentFieldData;
 				}
 			}
+		}
+	}
+	
+	private void setProjectionNEstedField(Object rootFieldData, Object entity, Field field, List<Map<String, Class>> fieldPaths) throws Exception {
+		Object currentObject = entity;
+		Object currentProjectionObject = rootFieldData;
+		
+		for (int i = fieldPaths.size() - 1; i >= 0; i--) {
+			Map.Entry<String, Class> fieldEntry = fieldPaths.get(i).entrySet().iterator().next();
 			
-			setFieldValueResult(rootObject, object, fieldRoot);
+			Field currentEntityField = ReflectionUtils.getEntityFieldByName(currentObject.getClass(), fieldEntry.getKey());
+			Field currentProjectionField = ReflectionUtils.getEntityFieldByName(currentProjectionObject.getClass(), fieldEntry.getKey());
+			
+			Object currentEntityData = currentEntityField.get(currentObject);
+			Object currentProjectionData = currentProjectionField.get(currentProjectionObject);
+			
+			if (currentEntityData == null) {
+				setFieldValue(currentProjectionData, currentObject, currentEntityField);
+				break;
+			
+			} else {
+				currentObject = currentEntityData;
+				currentProjectionObject = currentProjectionData;
+			}
 		}
 	}
 
-	private Stack<Map<String, Class>> buildNestedFieldStack(Class<ENTITY> entityClass, Path<Object> attributePath) {
-		Stack<Map<String, Class>> fieldPaths = new Stack<>();
+	private void setLastProjectionNestedField(Class clazz, Object fieldData, Object object, Map.Entry<String, Class> fieldEntry) throws NoSuchFieldException, Exception {
+		Field fieldRoot = ReflectionUtils.getEntityFieldByName(clazz, fieldEntry.getKey());
+		fieldRoot.setAccessible(true);
+		setFieldValue(fieldData, object, fieldRoot);
+	}
+
+	private List<Map<String, Class>> buildNestedFields(Class<ENTITY> entityClass, Path<Object> attributePath) {
+		List<Map<String, Class>> fieldPaths = new ArrayList<>();
 		
 		do {
 			if (!entityClass.equals(attributePath.getJavaType())) {
-				fieldPaths.push(Collections.singletonMap(attributePath.getAlias(), attributePath.getJavaType()));
+				fieldPaths.add(Collections.singletonMap(attributePath.getAlias(), attributePath.getJavaType()));
 			}
 			
 			attributePath = (Path<Object>) attributePath.getParentPath();
@@ -253,7 +270,7 @@ public class ApiResultMapper<ENTITY extends BaseApiEntity> {
 		return aggregation;
 	}
 
-	private void setFieldValueResult(Object fieldDataValue, Object object, Field field) throws Exception {
+	private void setFieldValue(Object fieldDataValue, Object object, Field field) throws Exception {
 		if (Collection.class.isAssignableFrom(field.getType())) {
 			Collection collection = (Collection) field.get(object);
 			

@@ -6,12 +6,10 @@ import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -22,12 +20,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class BaseApiEntity {
 	
 	@Id
-	@GeneratedValue(generator = "pooled")
-	@GenericGenerator(name = "pooled", strategy = "org.hibernate.id.enhanced.TableGenerator", parameters = {
-	        @Parameter(name = "value_column_name", value = "sequence_next_hi_value"),
-	        @Parameter(name = "prefer_entity_table_as_segment_value", value = "true"),
-	        @Parameter(name = "optimizer", value = "pooled-lo"),
-	        @Parameter(name = "increment_size", value = "100")})
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false, updatable = false)
 	private Long id;
 	
@@ -126,9 +119,18 @@ public class BaseApiEntity {
 		this.sum = sum;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void addSum(Map<String, Object> sum) {
 		Map.Entry<String, Object> sumEntry = sum.entrySet().iterator().next();
-		this.sum.put(sumEntry.getKey(), sumEntry.getValue());
+		Map<String, Object> sumCurrent = this.sum;
+		
+		while (sumCurrent.get(sumEntry.getKey()) != null) {
+			sumCurrent = (Map<String, Object>) sumCurrent.get(sumEntry.getKey());
+			sum = (Map<String, Object>) sumEntry.getValue();
+			sumEntry = sum.entrySet().iterator().next();
+		}
+		
+		sumCurrent.put(sumEntry.getKey(), sumEntry.getValue());
 	}
 
 	public Map<String, Object> getAvg() {
@@ -139,9 +141,18 @@ public class BaseApiEntity {
 		this.avg = avg;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void addAvg(Map<String, Object> avg) {
 		Map.Entry<String, Object> avgEntry = avg.entrySet().iterator().next();
-		this.avg.put(avgEntry.getKey(), avgEntry.getValue());
+		Map<String, Object> avgCurrent = this.avg;
+		
+		while (avgCurrent.get(avgEntry.getKey()) != null) {
+			avgCurrent = (Map<String, Object>) avgCurrent.get(avgEntry.getKey());
+			avg = (Map<String, Object>) avgEntry.getValue();
+			avgEntry = avg.entrySet().iterator().next();
+		}
+		
+		avgCurrent.put(avgEntry.getKey(), avgEntry.getValue());
 	}
 
 	public Map<String, Object> getCount() {
@@ -152,9 +163,18 @@ public class BaseApiEntity {
 		this.count = count;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void addCount(Map<String, Object> count) {
 		Map.Entry<String, Object> countEntry = count.entrySet().iterator().next();
-		this.count.put(countEntry.getKey(), countEntry.getValue());
+		Map<String, Object> countCurrent = this.count;
+		
+		while (countCurrent.get(countEntry.getKey()) != null) {
+			countCurrent = (Map<String, Object>) countCurrent.get(countEntry.getKey());
+			count = (Map<String, Object>) countEntry.getValue();
+			countEntry = count.entrySet().iterator().next();
+		}
+		
+		countCurrent.put(countEntry.getKey(), countEntry.getValue());
 	}
 	
 	public static BaseApiEntityBuilder builder() {
