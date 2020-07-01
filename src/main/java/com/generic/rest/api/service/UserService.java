@@ -24,10 +24,10 @@ import com.generic.rest.api.util.TokenUtils;
 public class UserService extends ApiRestService<User, UserRepository> {
 	
 	@Autowired
-	private TokenAuthenticationService tokenAuthenticationService;
+	private UserRepository userRepository;
 	
 	@Autowired
-	private UserRepository userRepository;
+	private TokenAuthenticationService tokenAuthenticationService;
 	
 	@Override
 	protected UserRepository getRepository() {
