@@ -1,4 +1,4 @@
-package com.generic.rest.api.controller.core;
+package com.generic.rest.api.controller;
 
 import java.util.Map;
 
@@ -17,7 +17,7 @@ import com.generic.rest.api.Constants.CONTROLLER;
 import com.generic.rest.api.Constants.JWT_AUTH;
 import com.generic.rest.api.config.security.WithoutSecurity;
 import com.generic.rest.api.exception.NotFoundApiException;
-import com.generic.rest.api.service.core.AuthenticationService;
+import com.generic.rest.api.service.UserService;
 
 @RestController
 @RequestMapping(CONTROLLER.LOGIN.PATH)
@@ -26,13 +26,13 @@ public class AuthenticationController {
 	private static final Logger log = LoggerFactory.getLogger(AuthenticationController.class);
 	
 	@Autowired
-	private AuthenticationService authenticationService;
+	private UserService userService;
 	
 	@WithoutSecurity
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<Map<String, String>> authenticate(@RequestBody  Map<String, String> credentials) throws NotFoundApiException {
 		log.info("Processing login for user credentials: [{}]", credentials != null ? credentials.get(JWT_AUTH.CLAIM_EMAIL) : null);
-		return new ResponseEntity<>(authenticationService.attemptAuthentication(credentials), HttpStatus.OK);
+		return new ResponseEntity<>(userService.attemptAuthentication(credentials), HttpStatus.OK);
 	}
 	
 }

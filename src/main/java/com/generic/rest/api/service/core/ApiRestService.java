@@ -26,9 +26,6 @@ public abstract class ApiRestService<ENTITY extends BaseApiEntity, REPOSITORY ex
 	@Autowired
 	private ApiRepository<ENTITY> apiRepository;
 	
-	@Autowired
-	protected TokenAuthenticationService tokenAuthenticationService;
-	
 	protected abstract REPOSITORY getRepository();
 	protected abstract Class<ENTITY> getEntityClass();
 	

@@ -9,7 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.generic.rest.api.Constants.MSG_ERROR;
 import com.generic.rest.api.exception.UnauthorizedApiException;
-import com.generic.rest.api.service.core.TokenAuthenticationService;
+import com.generic.rest.api.service.TokenAuthenticationService;
 
 public class AuthorizationInterceptor implements HandlerInterceptor {
 

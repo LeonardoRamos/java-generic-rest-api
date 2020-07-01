@@ -1,5 +1,5 @@
 
-package com.generic.rest.api.controller.core.advice;
+package com.generic.rest.api.controller.advice;
 
 import java.util.Collections;
 import java.util.Map;

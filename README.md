@@ -5,8 +5,8 @@ API Rest developed using *Java*. Its purpose is to serve as a lib to make it eas
 
 ## Setting up
 
-To test the project locally, simply clone the repository and import into *Eclipse* (or any other IDE of your choice) as a *Gradle* project.
-After that, you will need to run `gradle` build and run the project using the IDE.
+To test the project locally, simply clone the repository and import into *Eclipse* (or any other IDE of your choice) as a *Maven* project.
+After that, you will need to run `maven` install and then run the project using the IDE.
 
 
 ## API

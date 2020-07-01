@@ -1,4 +1,4 @@
-package com.generic.rest.api.service.core;
+package com.generic.rest.api.service;
 
 import java.util.Date;
 import java.util.HashMap;

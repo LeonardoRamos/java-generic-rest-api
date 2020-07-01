@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import com.generic.rest.api.Constants.JWT_AUTH;
-import com.generic.rest.api.service.core.TokenAuthenticationService;
+import com.generic.rest.api.service.TokenAuthenticationService;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)

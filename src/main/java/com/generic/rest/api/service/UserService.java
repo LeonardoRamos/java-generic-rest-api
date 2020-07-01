@@ -1,9 +1,17 @@
 package com.generic.rest.api.service;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
 import com.generic.rest.api.Constants;
+import com.generic.rest.api.Constants.CONTROLLER.LOGIN;
+import com.generic.rest.api.Constants.JWT_AUTH;
+import com.generic.rest.api.Constants.MSG_ERROR;
 import com.generic.rest.api.domain.Role;
 import com.generic.rest.api.domain.User;
 import com.generic.rest.api.exception.ApiException;
@@ -16,6 +24,9 @@ import com.generic.rest.api.util.TokenUtils;
 public class UserService extends ApiRestService<User, UserRepository> {
 	
 	@Autowired
+	private TokenAuthenticationService tokenAuthenticationService;
+	
+	@Autowired
 	private UserRepository userRepository;
 	
 	@Override
@@ -26,6 +37,20 @@ public class UserService extends ApiRestService<User, UserRepository> {
 	@Override
 	protected Class<User> getEntityClass() {
 		return User.class;
+	}
+	
+	public Map<String, String> attemptAuthentication(Map<String, String> credentials) throws AuthenticationException {
+		User userAccount = getUserByEmailAndActive(credentials.get(LOGIN.EMAIL_FIELD), Boolean.TRUE);
+		
+		if (userAccount == null) {
+			throw new AuthenticationCredentialsNotFoundException(MSG_ERROR.AUTHENTICATION_ERROR);
+		}
+		
+		if (!EncrypterUtils.matchPassword(credentials.get(LOGIN.PASSWORD_FIELD), userAccount.getPassword())) {
+			throw new AuthenticationCredentialsNotFoundException(MSG_ERROR.AUTHENTICATION_ERROR);
+		}
+		
+		return Collections.singletonMap(JWT_AUTH.TOKEN, tokenAuthenticationService.generateToken(userAccount));
 	}
 	
 	@Override
