@@ -3,6 +3,8 @@ package com.generic.rest.api.config.security;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -11,15 +13,12 @@ import com.generic.rest.api.Constants.MSG_ERROR;
 import com.generic.rest.api.exception.UnauthorizedApiException;
 import com.generic.rest.api.service.TokenAuthenticationService;
 
+@Component
 public class AuthorizationInterceptor implements HandlerInterceptor {
 
+	@Autowired
 	private TokenAuthenticationService tokenAuthenticationService;
 	
-	public AuthorizationInterceptor(TokenAuthenticationService tokenAuthenticationService) {
-		super();
-		this.tokenAuthenticationService = tokenAuthenticationService;
-	}
-
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object objectHandler) throws Exception {
 		try {
