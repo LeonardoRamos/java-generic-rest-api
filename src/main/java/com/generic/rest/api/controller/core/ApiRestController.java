@@ -28,34 +28,34 @@ public abstract class ApiRestController<ENTITY extends BaseApiEntity, SERVICE ex
 	
 	public abstract SERVICE getService();
 	
-	@GetMapping(value = CONTROLLER.SLUG_PATH, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@GetMapping(value = CONTROLLER.SLUG_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ENTITY> getBySlug(@PathVariable(CONTROLLER.SLUG) String slug) throws NotFoundApiException {
 		log.info("Processing finOne by slug: [{}]", slug);
 		return (ResponseEntity<ENTITY>) new ResponseEntity<>(getService().findBySlug(slug), HttpStatus.OK);
 	}
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<ENTITY>> getAll(
     		@ModelAttribute("RequestFilter") RequestFilter requestFilter) throws ApiException {
     	log.info("Finding Entity by requestFilter=[{}]", requestFilter);
 		return new ResponseEntity<>(getService().findAll(requestFilter), HttpStatus.OK);
     }
     
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ENTITY> insert(@RequestBody ENTITY entity) throws ApiException {
     	log.info("Processing insert of data: [{}]", entity);
 		return (ResponseEntity<ENTITY>) new ResponseEntity<>(getService().save(entity), HttpStatus.OK);
     }
     
     @PutMapping(value = CONTROLLER.SLUG_PATH, 
-			consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+			consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ENTITY> update(@PathVariable(CONTROLLER.SLUG) String slug, 
     		@RequestBody ENTITY entity) throws ApiException {
     	log.info("Processing update of entity of slug: [{}]", slug);
 		return (ResponseEntity<ENTITY>) new ResponseEntity<>(getService().update(entity), HttpStatus.OK);
     }
     
-    @DeleteMapping(value = CONTROLLER.SLUG_PATH, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @DeleteMapping(value = CONTROLLER.SLUG_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> delete(@PathVariable(CONTROLLER.SLUG) String slug) throws ApiException {
     	log.info("Processing delete of entity of slug: [{}]", slug);
     	getService().delete(slug);

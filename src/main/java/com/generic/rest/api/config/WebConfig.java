@@ -6,14 +6,13 @@ import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilde
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import com.generic.rest.api.Constants.JWT_AUTH;
 
 @Configuration
-public class WebConfig extends WebMvcConfigurerAdapter {
+public class WebConfig extends WebMvcConfigurationSupport {
 	
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -30,13 +29,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     
     @Bean
 	public Jackson2ObjectMapperBuilderCustomizer jacksonObjectMapperCustomization() {
-        return new Jackson2ObjectMapperBuilderCustomizer() {
-
-            @Override
-            public void customize(Jackson2ObjectMapperBuilder jacksonObjectMapperBuilder) {
-            	jacksonObjectMapperBuilder.timeZone(TimeZone.getDefault());
-            }
-
+        return builder -> {
+        	builder.timeZone(TimeZone.getDefault());
         };
 	}
     

@@ -17,8 +17,8 @@ import java.util.Queue;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Selection;
 
-import org.hibernate.jpa.criteria.expression.function.AggregationFunction;
 import org.hibernate.mapping.Set;
+import org.hibernate.query.criteria.internal.expression.function.AggregationFunction;
 import org.springframework.stereotype.Component;
 
 import com.generic.rest.api.domain.core.BaseApiEntity;

@@ -4,14 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.generic.rest.api.Constants.JWT_AUTH;
 import com.generic.rest.api.service.TokenAuthenticationService;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfig extends WebMvcConfigurerAdapter {
+public class WebSecurityConfig implements WebMvcConfigurer {
 	
 	@Autowired
 	private TokenAuthenticationService tokenAuthenticationService;

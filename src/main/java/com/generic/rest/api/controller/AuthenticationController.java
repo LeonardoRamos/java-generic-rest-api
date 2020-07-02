@@ -29,7 +29,7 @@ public class AuthenticationController {
 	private UserService userService;
 	
 	@WithoutSecurity
-	@PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> authenticate(@RequestBody  Map<String, String> credentials) throws NotFoundApiException {
 		log.info("Processing login for user credentials: [{}]", credentials != null ? credentials.get(JWT_AUTH.CLAIM_EMAIL) : null);
 		return new ResponseEntity<>(userService.attemptAuthentication(credentials), HttpStatus.OK);
