@@ -1,10 +1,8 @@
 package com.generic.rest.api.config.security;
 
 import java.util.Arrays;
-import java.util.TimeZone;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -63,11 +61,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
         return source;
     }
     
-    @Bean
-	public Jackson2ObjectMapperBuilderCustomizer jacksonObjectMapperCustomization() {
-        return builder -> {
-        	builder.timeZone(TimeZone.getDefault());
-        };
-	}
-
 }

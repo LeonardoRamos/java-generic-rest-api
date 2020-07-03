@@ -15,6 +15,16 @@ public interface Constants {
 		final String RELAXED_SERVER_PATH_VALUE = "[]|";
 	}
 	
+	public interface HEALTH_CHECK {
+		
+		public interface DATABASE {
+			final String FAILED_MESSAGE = "DataSource health check failed";
+			final String NO_DATASOURCE = "DataSource for DatabaseHealthIndicator must be specified";
+			final String KEY = "database";
+			final String UNKNOWN_DATASOURCE = "unknown";
+		}
+	}
+	
 	public interface CONTROLLER {
 		final String VERSION = "v1";
 		final String PATH_SEPARATOR = "/";
