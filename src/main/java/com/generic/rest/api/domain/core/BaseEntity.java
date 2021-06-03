@@ -22,15 +22,6 @@ public class BaseEntity {
 	@Column(name = "id", nullable = false, updatable = false)
 	private Long id;
 	
-	public BaseEntity() {}
-
-	public BaseEntity(BaseEntityBuilder builder) {
-		this.id = builder.id;
-		this.sum = builder.sum;
-		this.avg = builder.avg;
-		this.count = builder.count;
-	}
-	
 	@Transient
 	private Map<String, Object> sum = new HashMap<String, Object>();
 	
@@ -39,6 +30,15 @@ public class BaseEntity {
 	
 	@Transient
 	private Map<String, Object> count = new HashMap<String, Object>();
+	
+	public BaseEntity() {}
+
+	public BaseEntity(BaseEntityBuilder builder) {
+		this.id = builder.id;
+		this.sum = builder.sum;
+		this.avg = builder.avg;
+		this.count = builder.count;
+	}
 	
 	public Long getId() {
 		return id;

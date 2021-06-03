@@ -14,26 +14,26 @@ public abstract class BaseRestService<ENTITY extends BaseEntity, REPOSITORY exte
 	
 	@Override
 	public ENTITY update(ENTITY entity) throws ApiException {
-		Boolean existsEntity = getRepository().existsById(entity.getId());
-		
-		if (!existsEntity) {
-			throw new NotFoundApiException(String.format(MSG_ERROR.BASE_ENTITY_NOT_FOUND_ERROR, entity.getId()));
-		}
+		validateExists(entity.getId());
 		
 		return getRepository().saveAndFlush(entity);
 	}
-
+	
 	public Boolean delete(Long id) throws ApiException {
-	   	Boolean existsEntity = getRepository().existsById(id);
-		
-		if (!existsEntity) {
-			throw new NotFoundApiException(String.format(MSG_ERROR.BASE_ENTITY_NOT_FOUND_ERROR, id));
-		}
+		validateExists(id);
 		
 		getRepository().deleteById(id);
 	   
 	   	return Boolean.TRUE;
    	}
+
+	private void validateExists(Long id) throws NotFoundApiException {
+		Boolean existsEntity = getRepository().existsById(id);
+		
+		if (!existsEntity) {
+			throw new NotFoundApiException(String.format(MSG_ERROR.BASE_ENTITY_NOT_FOUND_ERROR, id));
+		}
+	}
    
 	@Override
    	public ENTITY save(ENTITY entity) throws ApiException {
