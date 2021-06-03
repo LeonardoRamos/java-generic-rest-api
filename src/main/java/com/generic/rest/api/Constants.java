@@ -72,6 +72,7 @@ public interface Constants {
 		final String ENTITIES_NOT_FOUND_ERROR = "No entities found for requestFilter [%s]";
 		final String BAD_REQUEST_ERROR = "Malformed request for requestFilter [%s]";
 		final String ENTITY_NOT_FOUND_ERROR = "No entity found for slug [%s]";
+		final String BASE_ENTITY_NOT_FOUND_ERROR = "No entity found for id [%s]";
 		final String PARSE_PROJECTIONS_ERROR = "Error parsing projections of filter [%s]";
 		final String PARSE_FILTER_FIELDS_ERROR = "Error parsing filter fields of filter [%s]";
 		final String PARSE_SORT_ORDER_ERROR = "Error parsing sort order of filter [%s]";
