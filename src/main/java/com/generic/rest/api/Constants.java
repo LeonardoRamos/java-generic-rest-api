@@ -69,8 +69,16 @@ public interface Constants {
 		final String ALL_PATH_CORS_REGEX = "/**";
 		final String ALL_PATH_ORIGIN_REGEX = "*";
 	}
+	
+	public interface ERRORKEYS {
+		final String ERROR_CODE_KEY = "code";
+		final String ERROR_MSG_KEY = "message";
+		final String KEY = "errors";
+		final String MSG_ERROR = "MSG_ERROR";
+	}
 
 	public interface MSG_ERROR {
+		final String DEFAULT_ERROR_CODE = "ERROR_CODE";
 		final String AUTHENTICATION_ERROR = "Wrong username or password";
 		final String ENTITIES_NOT_FOUND_ERROR = "No entities found for requestFilter [%s]";
 		final String BAD_REQUEST_ERROR = "Malformed request for requestFilter [%s]";
@@ -84,8 +92,16 @@ public interface Constants {
 		final String ERROR_PARSE_DATE = "Error while parsing date [{}] to Calendar";
 		final String AUTH_ERROR_INVALID_TOKEN = "Invalid token [{}].";
 		final String AUTHORIZATION_TOKEN_NOT_VALID = "Authorization token not valid";
-		final String KEY = "message";
 		final String INTERNAL_ERROR = "Unexpected error";
+		final String MEDIA_TYPE_NOT_SUPPORTED = "Media type not supported";
+		final String METHOD_NOT_SUPPORTED = "Method not supported";
+		final String MEDIA_TYPE_NOT_ACCEPTABLE = "Media type not accepted";
+		final String PARAMETER_NOT_PRESENT = "Parameter not present";
+		final String UNRECOGNIZED_FIELD = "Unrecognized field";
+		final String INVALID_VALUE = "Invalid value";
+		final String BODY_INVALID = "Body invalid";
+		final String MESSAGE_NOT_READABLE = "Message not readable";
+		final String VALIDATION_ERROR = "Validation error";
 	}
 
 }
