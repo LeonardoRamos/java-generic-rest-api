@@ -31,6 +31,9 @@ public interface Constants {
 		final String SLUG = "slug";
 		final String SLUG_PARAM = "{" + SLUG + "}";
 		final String SLUG_PATH = PATH_SEPARATOR + SLUG_PARAM;
+		final String ID = "id";
+		final String ID_PARAM = "{" + ID + "}";
+		final String ID_PATH = PATH_SEPARATOR + ID_PARAM;
 		final String HEALTH_PATH = "/health";
 		final String BASE_PATH = PATH_SEPARATOR + VERSION + PATH_SEPARATOR;
 

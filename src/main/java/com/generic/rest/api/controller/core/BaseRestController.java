@@ -23,16 +23,16 @@ public abstract class BaseRestController<ENTITY extends BaseEntity, SERVICE exte
 	
 	public abstract SERVICE getService();
 	
-    @PutMapping(value = CONTROLLER.SLUG_PATH, 
+    @PutMapping(value = CONTROLLER.ID_PATH, 
 			consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ENTITY> update(@PathVariable(CONTROLLER.SLUG) Long id, 
+    public ResponseEntity<ENTITY> update(@PathVariable(CONTROLLER.ID) Long id, 
     		@RequestBody ENTITY entity) throws ApiException {
     	log.info("Processing update of entity of id: [{}]", id);
 		return (ResponseEntity<ENTITY>) new ResponseEntity<>(getService().update(entity), HttpStatus.OK);
     }
     
-    @DeleteMapping(value = CONTROLLER.SLUG_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> delete(@PathVariable(CONTROLLER.SLUG) Long id) throws ApiException {
+    @DeleteMapping(value = CONTROLLER.ID_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> delete(@PathVariable(CONTROLLER.ID) Long id) throws ApiException {
     	log.info("Processing delete of entity of id: [{}]", id);
     	getService().delete(id);
 		return new ResponseEntity<>(HttpStatus.OK);
