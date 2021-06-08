@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.generic.rest.api.Constants.MSG_ERROR;
-import com.generic.rest.api.domain.core.BaseApiEntity;
+import com.generic.rest.api.domain.core.BaseEntity;
 import com.generic.rest.api.domain.core.filter.RequestFilter;
 import com.generic.rest.api.exception.BadRequestApiException;
 import com.generic.rest.api.exception.InternalErrorApiException;
@@ -26,7 +26,7 @@ import com.generic.rest.api.exception.NotFoundApiException;
 import com.generic.rest.api.repository.core.mapper.ApiResultMapper;
 
 @Repository
-public class ApiRepository<ENTITY extends BaseApiEntity> {
+public class ApiRepository<ENTITY extends BaseEntity> {
 	
 	@Autowired
 	private EntityManager entityManager;

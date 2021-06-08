@@ -20,13 +20,13 @@ import org.hibernate.mapping.Set;
 import org.hibernate.query.criteria.internal.expression.function.AggregationFunction;
 import org.springframework.stereotype.Component;
 
-import com.generic.rest.api.domain.core.BaseApiEntity;
+import com.generic.rest.api.domain.core.BaseEntity;
 import com.generic.rest.api.domain.core.filter.AggregateFunction;
 import com.generic.rest.api.util.ReflectionUtils;
 
 @Component
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class ApiResultMapper<ENTITY extends BaseApiEntity> {
+public class ApiResultMapper<ENTITY extends BaseEntity> {
 	
 	public List<ENTITY> mapResultSet(
 			Class<ENTITY> entityClass, 

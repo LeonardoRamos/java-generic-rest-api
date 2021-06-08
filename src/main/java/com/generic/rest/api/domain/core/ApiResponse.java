@@ -2,7 +2,7 @@ package com.generic.rest.api.domain.core;
 
 import java.util.List;
 
-public class ApiResponse<ENTITY extends BaseApiEntity> {
+public class ApiResponse<ENTITY extends BaseEntity> {
 	
 	private List<ENTITY> records;
 	private ApiMetadata metadata;
