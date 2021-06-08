@@ -16,12 +16,12 @@ import com.generic.rest.api.domain.Role;
 import com.generic.rest.api.domain.User;
 import com.generic.rest.api.exception.ApiException;
 import com.generic.rest.api.repository.UserRepository;
-import com.generic.rest.api.service.core.ApiRestService;
+import com.generic.rest.api.service.core.BaseApiRestService;
 import com.generic.rest.api.util.EncrypterUtils;
 import com.generic.rest.api.util.TokenUtils;
 
 @Service
-public class UserService extends ApiRestService<User, UserRepository> {
+public class UserService extends BaseApiRestService<User, UserRepository> {
 	
 	@Autowired
 	private UserRepository userRepository;

@@ -31,6 +31,9 @@ public interface Constants {
 		final String SLUG = "slug";
 		final String SLUG_PARAM = "{" + SLUG + "}";
 		final String SLUG_PATH = PATH_SEPARATOR + SLUG_PARAM;
+		final String ID = "id";
+		final String ID_PARAM = "{" + ID + "}";
+		final String ID_PATH = PATH_SEPARATOR + ID_PARAM;
 		final String HEALTH_PATH = "/health";
 		final String BASE_PATH = PATH_SEPARATOR + VERSION + PATH_SEPARATOR;
 
@@ -66,22 +69,39 @@ public interface Constants {
 		final String ALL_PATH_CORS_REGEX = "/**";
 		final String ALL_PATH_ORIGIN_REGEX = "*";
 	}
+	
+	public interface ERRORKEYS {
+		final String ERROR_CODE_KEY = "code";
+		final String ERROR_MSG_KEY = "message";
+		final String KEY = "errors";
+		final String MSG_ERROR = "MSG_ERROR";
+	}
 
 	public interface MSG_ERROR {
+		final String DEFAULT_ERROR_CODE = "ERROR_CODE";
 		final String AUTHENTICATION_ERROR = "Wrong username or password";
 		final String ENTITIES_NOT_FOUND_ERROR = "No entities found for requestFilter [%s]";
 		final String BAD_REQUEST_ERROR = "Malformed request for requestFilter [%s]";
 		final String ENTITY_NOT_FOUND_ERROR = "No entity found for slug [%s]";
+		final String BASE_ENTITY_NOT_FOUND_ERROR = "No entity found for id [%s]";
 		final String PARSE_PROJECTIONS_ERROR = "Error parsing projections of filter [%s]";
 		final String PARSE_FILTER_FIELDS_ERROR = "Error parsing filter fields of filter [%s]";
 		final String PARSE_SORT_ORDER_ERROR = "Error parsing sort order of filter [%s]";
 		final String UNEXPECTED_FETCHING_ERROR = "Unexpected error processing query data [%s]";
 		final String INVALID_AGGREGATION_ERROR = "Invalid aggregation fields";
 		final String ERROR_PARSE_DATE = "Error while parsing date [{}] to Calendar";
-		final String AUTH_ERROR_INVALID_TOKEN = "Invalid token [{}].";
+		final String AUTH_ERROR_INVALID_TOKEN = "Invalid token [{}]";
 		final String AUTHORIZATION_TOKEN_NOT_VALID = "Authorization token not valid";
-		final String KEY = "message";
 		final String INTERNAL_ERROR = "Unexpected error";
+		final String MEDIA_TYPE_NOT_SUPPORTED = "Media type not supported";
+		final String METHOD_NOT_SUPPORTED = "Method not supported";
+		final String MEDIA_TYPE_NOT_ACCEPTABLE = "Media type not accepted";
+		final String PARAMETER_NOT_PRESENT = "Parameter not present";
+		final String UNRECOGNIZED_FIELD = "Unrecognized field";
+		final String INVALID_VALUE = "Invalid value";
+		final String BODY_INVALID = "Body invalid";
+		final String MESSAGE_NOT_READABLE = "Message not readable";
+		final String VALIDATION_ERROR = "Validation error";
 	}
 
 }
