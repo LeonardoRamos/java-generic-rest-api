@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 
 import com.generic.rest.api.Constants;
@@ -33,25 +34,26 @@ public class ErrorParser {
 		List<Map<String, String>> errors = new ArrayList<>();
 
 		if (bindingResult != null) {
-			
+			String message = Constants.MSG_ERROR.VALIDATION_ERROR;
+			String code = getErrorCode(message);
+					
 			for (ObjectError objectError: bindingResult.getAllErrors()) {
-				String code = Constants.MSG_ERROR.VALIDATION_ERROR;
-				List<Object> data = new ArrayList<>();
-				
 				if (objectError.getDefaultMessage() != null) {
 					
-					if (objectError.getDefaultMessage().contains("|")) {
-						String[] splitedMsg = objectError.getDefaultMessage().split("\\|");
-						code = splitedMsg[0];
-						for (int i = 1; i < splitedMsg.length; i++) {
-							data.add(splitedMsg[i]);
-						}
-					
-					} else {
-						data.add(objectError.getDefaultMessage());
+					if (objectError instanceof FieldError) {
+						String fieldError = ((FieldError) objectError).getField();
+						
+						code = new StringBuilder(code).append("_").append(fieldError).toString();
 					}
+					
+					message = objectError.getDefaultMessage();
 				}
-				errors.add(createError(code, data.toArray()));
+				
+				Map<String, String> error = new HashMap<>();
+				error.put(ERRORKEYS.ERROR_CODE_KEY, code);
+		    	error.put(ERRORKEYS.ERROR_MSG_KEY, message);
+				
+				errors.add(error);
 			}
 		}
 		
@@ -78,7 +80,23 @@ public class ErrorParser {
 	private Map<String, String> createError(String message, Object... data) {
 		Map<String, String> error = new HashMap<>();
     	
-		error.put(ERRORKEYS.ERROR_CODE_KEY, getErrorCode(message));
+		String code = getErrorCode(message);
+
+		if (data != null && data.length > 0) {
+			StringBuilder dataMessage = new StringBuilder(message).append(" [");
+			
+			for (int i = 0; i < data.length; i++) {
+				dataMessage.append(data[i]);
+				
+				if (i < (data.length - 1)) {
+					dataMessage.append(", ");
+				}
+			}
+			
+			message = dataMessage.append("]").toString();
+		}
+		
+		error.put(ERRORKEYS.ERROR_CODE_KEY, code);
     	error.put(ERRORKEYS.ERROR_MSG_KEY, message);
     	
     	return error;
@@ -92,9 +110,9 @@ public class ErrorParser {
 				if (innerClasses[i].getSimpleName().equals(ERRORKEYS.MSG_ERROR)) {
 					Class<?> msgErrorData = innerClasses[i];
 					
-					for (Field errorKeysFIelds : msgErrorData.getFields()) {
-						if (errorKeysFIelds.get(msgErrorData).equals(message)) {
-							return errorKeysFIelds.getName();
+					for (Field errorKeysFields : msgErrorData.getFields()) {
+						if (errorKeysFields.get(msgErrorData).equals(message)) {
+							return errorKeysFields.getName();
 						}
 					}
 				}

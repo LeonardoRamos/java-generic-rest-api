@@ -90,7 +90,7 @@ public interface Constants {
 		final String UNEXPECTED_FETCHING_ERROR = "Unexpected error processing query data [%s]";
 		final String INVALID_AGGREGATION_ERROR = "Invalid aggregation fields";
 		final String ERROR_PARSE_DATE = "Error while parsing date [{}] to Calendar";
-		final String AUTH_ERROR_INVALID_TOKEN = "Invalid token [{}].";
+		final String AUTH_ERROR_INVALID_TOKEN = "Invalid token [{}]";
 		final String AUTHORIZATION_TOKEN_NOT_VALID = "Authorization token not valid";
 		final String INTERNAL_ERROR = "Unexpected error";
 		final String MEDIA_TYPE_NOT_SUPPORTED = "Media type not supported";
