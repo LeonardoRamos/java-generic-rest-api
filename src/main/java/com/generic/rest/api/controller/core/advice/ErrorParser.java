@@ -43,7 +43,7 @@ public class ErrorParser {
 					if (objectError instanceof FieldError) {
 						String fieldError = ((FieldError) objectError).getField();
 						
-						code = new StringBuilder(code).append("_").append(fieldError).toString();
+						code = new StringBuilder(code).append("_").append(fieldError).toString().toUpperCase();
 					}
 					
 					message = objectError.getDefaultMessage();
