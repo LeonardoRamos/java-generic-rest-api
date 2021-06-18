@@ -21,8 +21,6 @@ public abstract class BaseRestController<ENTITY extends BaseEntity, SERVICE exte
 	
 	private static final Logger log = LoggerFactory.getLogger(BaseRestController.class);
 	
-	public abstract SERVICE getService();
-	
     @PutMapping(value = CONTROLLER.ID_PATH, 
 			consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ENTITY> update(@PathVariable(CONTROLLER.ID) Long id, 

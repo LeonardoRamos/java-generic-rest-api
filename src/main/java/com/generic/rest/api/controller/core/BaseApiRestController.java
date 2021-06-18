@@ -21,8 +21,6 @@ public abstract class BaseApiRestController<ENTITY extends BaseApiEntity, SERVIC
 	
 	private static final Logger log = LoggerFactory.getLogger(BaseApiRestController.class);
 	
-	public abstract SERVICE getService();
-	
     @PutMapping(value = CONTROLLER.SLUG_PATH, 
 			consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ENTITY> update(@PathVariable(CONTROLLER.SLUG) String slug, 
