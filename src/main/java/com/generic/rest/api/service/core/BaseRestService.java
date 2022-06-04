@@ -12,6 +12,16 @@ import com.generic.rest.api.repository.core.BaseRepository;
 public abstract class BaseRestService<ENTITY extends BaseEntity, REPOSITORY extends BaseRepository<ENTITY>> 
 	extends ApiRestService<ENTITY, REPOSITORY> {
 	
+	public ENTITY findById(Long id) throws NotFoundApiException {
+		ENTITY entity = (ENTITY) getRepository().getOne(id);
+		
+		if (entity == null) {
+			throw new NotFoundApiException(String.format(MSG_ERROR.BASE_ENTITY_NOT_FOUND_ERROR, id));
+		}
+		
+		return entity;
+	}
+	
 	@Override
 	public ENTITY update(ENTITY entity) throws ApiException {
 		validateExists(entity.getId());

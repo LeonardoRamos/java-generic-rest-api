@@ -28,9 +28,9 @@ public interface Constants {
 	public interface CONTROLLER {
 		final String VERSION = "v1";
 		final String PATH_SEPARATOR = "/";
-		final String SLUG = "slug";
-		final String SLUG_PARAM = "{" + SLUG + "}";
-		final String SLUG_PATH = PATH_SEPARATOR + SLUG_PARAM;
+		final String EXTERNAL_ID = "externalId";
+		final String EXTERNAL_ID_PARAM = "{" + EXTERNAL_ID + "}";
+		final String EXTERNAL_ID_PATH = PATH_SEPARATOR + EXTERNAL_ID_PARAM;
 		final String ID = "id";
 		final String ID_PARAM = "{" + ID + "}";
 		final String ID_PATH = PATH_SEPARATOR + ID_PARAM;
@@ -58,7 +58,7 @@ public interface Constants {
 		final String CLAIM_EMAIL = "email";
 		final String CLAIM_NAME = "name";
 		final String CLAIM_ROLE = "role";
-		final String CLAIM_USER_SLUG = "userSlug";
+		final String CLAIM_USER_EXTERNAL_ID = "userExternalId";
 		final String TOKEN = "token";
 		final String BEARER = "Bearer";
 		final String X_ACCESS_TOKEN = "x-access-token";
@@ -82,7 +82,7 @@ public interface Constants {
 		final String AUTHENTICATION_ERROR = "Wrong username or password";
 		final String ENTITIES_NOT_FOUND_ERROR = "No entities found for requestFilter [%s]";
 		final String BAD_REQUEST_ERROR = "Malformed request for requestFilter [%s]";
-		final String ENTITY_NOT_FOUND_ERROR = "No entity found for slug [%s]";
+		final String ENTITY_NOT_FOUND_ERROR = "No entity found for externalId [%s]";
 		final String BASE_ENTITY_NOT_FOUND_ERROR = "No entity found for id [%s]";
 		final String PARSE_PROJECTIONS_ERROR = "Error parsing projections of filter [%s]";
 		final String PARSE_FILTER_FIELDS_ERROR = "Error parsing filter fields of filter [%s]";

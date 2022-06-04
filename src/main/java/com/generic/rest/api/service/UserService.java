@@ -63,11 +63,11 @@ public class UserService extends BaseApiRestService<User, UserRepository> {
 		return userRepository.findByEmailAndActive(email, active);
 	}
 	
-   	public Boolean allowUserAccess(String authorization, String userAccountSlug) {
+   	public Boolean allowUserAccess(String authorization, String userAccountExternalId) {
    		String token = TokenUtils.getTokenFromAuthorizationHeader(authorization);
-   		String userAccountSlugClaim = tokenAuthenticationService.getTokenClaim(token, Constants.JWT_AUTH.CLAIM_USER_SLUG);
+   		String userAccountExternalIdClaim = tokenAuthenticationService.getTokenClaim(token, Constants.JWT_AUTH.CLAIM_USER_EXTERNAL_ID);
 		
-   		return userAccountSlug.equals(userAccountSlugClaim) || allowAdminAccess(authorization);
+   		return userAccountExternalId.equals(userAccountExternalIdClaim) || allowAdminAccess(authorization);
    	}
 	
    	public Boolean allowAdminAccess(String authorization) {

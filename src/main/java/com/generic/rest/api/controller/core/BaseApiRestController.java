@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,18 +22,24 @@ public abstract class BaseApiRestController<ENTITY extends BaseApiEntity, SERVIC
 	
 	private static final Logger log = LoggerFactory.getLogger(BaseApiRestController.class);
 	
-    @PutMapping(value = CONTROLLER.SLUG_PATH, 
+	@GetMapping(value = CONTROLLER.EXTERNAL_ID_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ENTITY> getOne(@PathVariable(CONTROLLER.EXTERNAL_ID) String externalId) throws ApiException {
+    	log.info("Processing get of entity of externalId: [{}]", externalId);
+		return (ResponseEntity<ENTITY>) new ResponseEntity<>(getService().findByExternalId(externalId), HttpStatus.OK);
+    }
+	
+    @PutMapping(value = CONTROLLER.EXTERNAL_ID_PATH, 
 			consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ENTITY> update(@PathVariable(CONTROLLER.SLUG) String slug, 
+    public ResponseEntity<ENTITY> update(@PathVariable(CONTROLLER.EXTERNAL_ID) String externalId, 
     		@RequestBody ENTITY entity) throws ApiException {
-    	log.info("Processing update of entity of slug: [{}]", slug);
+    	log.info("Processing update of entity of externalId: [{}]", externalId);
 		return (ResponseEntity<ENTITY>) new ResponseEntity<>(getService().update(entity), HttpStatus.OK);
     }
     
-    @DeleteMapping(value = CONTROLLER.SLUG_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> delete(@PathVariable(CONTROLLER.SLUG) String slug) throws ApiException {
-    	log.info("Processing delete of entity of slug: [{}]", slug);
-    	getService().delete(slug);
+    @DeleteMapping(value = CONTROLLER.EXTERNAL_ID_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> delete(@PathVariable(CONTROLLER.EXTERNAL_ID) String externalId) throws ApiException {
+    	log.info("Processing delete of entity of externalId: [{}]", externalId);
+    	getService().delete(externalId);
 		return new ResponseEntity<>(HttpStatus.OK);
     }
     

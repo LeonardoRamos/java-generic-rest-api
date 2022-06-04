@@ -40,7 +40,7 @@ public class TokenAuthenticationService {
 	
 	public String generateToken(User user) {
 		Map<String, Object> claims = new HashMap<>();
-		claims.put(JWT_AUTH.CLAIM_USER_SLUG, user.getSlug());
+		claims.put(JWT_AUTH.CLAIM_USER_EXTERNAL_ID, user.getExternalId());
 		claims.put(JWT_AUTH.CLAIM_EMAIL, user.getEmail());
 		claims.put(JWT_AUTH.CLAIM_ROLE, user.getRole().name());
 		claims.put(JWT_AUTH.CLAIM_NAME, user.getName());
@@ -56,13 +56,13 @@ public class TokenAuthenticationService {
 	public Boolean validateToken(String token) {
 		if (token != null) {
 			try {
-				String userAccountSlug = (String) Jwts.parser()
+				String userAccountExternalId = (String) Jwts.parser()
 						.setSigningKey(secret)
 						.parseClaimsJws(StringParserUtils.replace(token, tokenPrefix, ""))
 						.getBody()
-						.get(Constants.JWT_AUTH.CLAIM_USER_SLUG);
+						.get(Constants.JWT_AUTH.CLAIM_USER_EXTERNAL_ID);
 				
-				if (userAccountSlug != null && !"".equals(userAccountSlug)) {
+				if (userAccountExternalId != null && !"".equals(userAccountExternalId)) {
 					return Boolean.TRUE;
 				}
 			} catch (Exception e) {

@@ -16,12 +16,12 @@ public interface BaseApiRepository<ENTITY extends BaseApiEntity> extends BaseRep
 	
 	@Transactional
 	@Modifying(clearAutomatically = true)
-    @Query("UPDATE #{#entityName} as E SET E.active = false, E.deleteDate = :deleteDate WHERE E.slug = :slug")
-    Long logicDelete(@Param("slug") String slug, @Param("deleteDate") Calendar deleteDate);
+    @Query("UPDATE #{#entityName} as E SET E.active = false, E.deleteDate = :deleteDate WHERE E.externalId = :externalId")
+    Long logicDelete(@Param("externalId") String externalId, @Param("deleteDate") Calendar deleteDate);
 
 	@Transactional
-	Integer deleteBySlug(String slug);
+	Integer deleteByExternalId(String externalId);
 
-	ENTITY findOneBySlug(String slug);
+	ENTITY findOneByExternalId(String externalId);
 	
 }

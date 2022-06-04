@@ -23,19 +23,19 @@ CREATE TYPE enum_user_account_role AS ENUM('ADMIN', 'USER');
 
 CREATE TABLE country(
 	id bigint NOT NULL DEFAULT nextval('country_id_seq'::regclass),
-  	slug character varying(32) NOT NULL,
+  	external_id character varying(32) NOT NULL,
   	active boolean NOT NULL,
   	creation_date timestamp with time zone NOT NULL,
   	update_date timestamp with time zone NOT NULL,
   	delete_date timestamp with time zone,
   	name character varying(255),
   	CONSTRAINT country_pkey PRIMARY KEY (id),
-  	CONSTRAINT country_slug_key UNIQUE (slug)
+  	CONSTRAINT country_external_id_key UNIQUE (external_id)
 );
 
 CREATE TABLE user_account(
 	id bigint NOT NULL DEFAULT nextval('user_account_id_seq'::regclass),
-  	slug character varying(32) NOT NULL,
+  	external_id character varying(32) NOT NULL,
   	active boolean NOT NULL,
   	creation_date timestamp with time zone NOT NULL,
   	update_date timestamp with time zone NOT NULL,
@@ -46,12 +46,12 @@ CREATE TABLE user_account(
   	role enum_user_account_role NOT NULL,
   	CONSTRAINT user_account_pkey PRIMARY KEY (id),
   	CONSTRAINT user_account_email_key UNIQUE (email),
-  	CONSTRAINT user_account_slug_key UNIQUE (slug)
+  	CONSTRAINT user_account_external_id_key UNIQUE (external_id)
 );
 
 CREATE TABLE address(
 	id bigint NOT NULL DEFAULT nextval('address_id_seq'::regclass),
-  	slug character varying(32) NOT NULL,
+  	external_id character varying(32) NOT NULL,
   	active boolean NOT NULL,
   	creation_date timestamp with time zone NOT NULL,
   	update_date timestamp with time zone NOT NULL,
@@ -68,5 +68,5 @@ CREATE TABLE address(
   	CONSTRAINT address_id_user_fkey FOREIGN KEY (id_user)
       	REFERENCES user_account (id) MATCH SIMPLE
       	ON UPDATE CASCADE ON DELETE CASCADE,
-  	CONSTRAINT address_slug_key UNIQUE (slug)
+  	CONSTRAINT address_external_id_key UNIQUE (external_id)
 );
