@@ -42,7 +42,7 @@ public class User extends BaseApiEntity {
 		this.role = builder.role;
 		this.address = builder.address;
 		this.setId(builder.getId());
-		this.setSlug(builder.getSlug());
+		this.setExternalId(builder.getExternalId());
 		this.setActive(builder.getActive());
 		this.setInsertDate(builder.getInsertDate());
 		this.setUpdateDate(builder.getUpdateDate());

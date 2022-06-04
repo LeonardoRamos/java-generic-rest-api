@@ -15,11 +15,11 @@ import com.generic.rest.api.util.KeyUtils;
 public abstract class BaseApiRestService<ENTITY extends BaseApiEntity, REPOSITORY extends BaseApiRepository<ENTITY>> 
 	extends ApiRestService<ENTITY, REPOSITORY>{
 	
-	public ENTITY findBySlug(String slug) throws NotFoundApiException {
-		ENTITY entity = (ENTITY) getRepository().findOneBySlug(slug);
+	public ENTITY findByExternalId(String externalId) throws NotFoundApiException {
+		ENTITY entity = (ENTITY) getRepository().findOneByExternalId(externalId);
 		
 		if (entity == null) {
-			throw new NotFoundApiException(String.format(MSG_ERROR.ENTITY_NOT_FOUND_ERROR, slug));
+			throw new NotFoundApiException(String.format(MSG_ERROR.ENTITY_NOT_FOUND_ERROR, externalId));
 		}
 		
 		return entity;
@@ -28,7 +28,7 @@ public abstract class BaseApiRestService<ENTITY extends BaseApiEntity, REPOSITOR
 	@Override
 	public ENTITY update(ENTITY entity) throws ApiException {
 		if (entity.getId() == null) {
-			ENTITY entityDatabase = findBySlug(entity.getSlug());
+			ENTITY entityDatabase = findByExternalId(entity.getExternalId());
 			entity.setId(entityDatabase.getId());
 		}
 
@@ -41,11 +41,11 @@ public abstract class BaseApiRestService<ENTITY extends BaseApiEntity, REPOSITOR
 		return getRepository().saveAndFlush(entity);
 	}
 
-	public Integer delete(String slug) throws ApiException {
-	   	Integer deletedCount = getRepository().deleteBySlug(slug);
+	public Integer delete(String externalId) throws ApiException {
+	   	Integer deletedCount = getRepository().deleteByExternalId(externalId);
 	   
 	   	if (deletedCount == 0) {
-		   	throw new NotFoundApiException(String.format(MSG_ERROR.ENTITY_NOT_FOUND_ERROR, slug));
+		   	throw new NotFoundApiException(String.format(MSG_ERROR.ENTITY_NOT_FOUND_ERROR, externalId));
 	   	}
 	   
 	   	return deletedCount;
@@ -53,8 +53,8 @@ public abstract class BaseApiRestService<ENTITY extends BaseApiEntity, REPOSITOR
    
 	@Override
    	public ENTITY save(ENTITY entity) throws ApiException {
-   		if (entity.getSlug() == null || "".equals(entity.getSlug())) {
-   			entity.setSlug(KeyUtils.generate());
+   		if (entity.getExternalId() == null || "".equals(entity.getExternalId())) {
+   			entity.setExternalId(KeyUtils.generate());
    		}
    		
    		entity.setInsertDate(Calendar.getInstance());

@@ -45,7 +45,7 @@ public class Address extends BaseApiEntity {
 		this.country = builder.country;
 		this.user = builder.user;
 		this.setId(builder.getId());
-		this.setSlug(builder.getSlug());
+		this.setExternalId(builder.getExternalId());
 		this.setActive(builder.getActive());
 		this.setInsertDate(builder.getInsertDate());
 		this.setUpdateDate(builder.getUpdateDate());

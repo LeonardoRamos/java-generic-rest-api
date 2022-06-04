@@ -13,8 +13,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(Include.NON_EMPTY)
 public class BaseApiEntity extends BaseEntity {
 	
-	@Column(name = "slug", nullable = false, updatable = false, length = 32)
-	private String slug;
+	@Column(name = "externalId", nullable = false, updatable = false, length = 32)
+	private String externalId;
 	
 	@Column(name = "active", nullable = false)
 	private Boolean active;
@@ -31,7 +31,7 @@ public class BaseApiEntity extends BaseEntity {
 	public BaseApiEntity() {}
 
 	public BaseApiEntity(BaseApiEntityBuilder builder) {
-		this.slug = builder.slug;
+		this.externalId = builder.externalId;
 		this.active = builder.active;
 		this.insertDate = builder.insertDate;
 		this.updateDate = builder.updateDate;
@@ -47,12 +47,12 @@ public class BaseApiEntity extends BaseEntity {
 		return super.getId();
 	}
 	
-	public String getSlug() {
-		return slug;
+	public String getExternalId() {
+		return externalId;
 	}
 
-	public void setSlug(String slug) {
-		this.slug = slug;
+	public void setExternalId(String externalId) {
+		this.externalId = externalId;
 	}
 
 	public Boolean getActive() {
@@ -93,14 +93,14 @@ public class BaseApiEntity extends BaseEntity {
 	
 	public static class BaseApiEntityBuilder extends BaseEntityBuilder {
 		
-		private String slug;
+		private String externalId;
 		private Boolean active = Boolean.TRUE;
 		private Calendar insertDate;
 		private Calendar updateDate;
 		private Calendar removeDate;
 
-		public BaseApiEntityBuilder slug(String slug) {
-			this.slug = slug;
+		public BaseApiEntityBuilder externalId(String externalId) {
+			this.externalId = externalId;
 			return this;
 		}
 		
@@ -124,12 +124,12 @@ public class BaseApiEntity extends BaseEntity {
 			return this;
 		}
 		
-		public String getSlug() {
-			return slug;
+		public String getExternalId() {
+			return externalId;
 		}
 
-		public void setSlug(String slug) {
-			this.slug = slug;
+		public void setExternalId(String externalId) {
+			this.externalId = externalId;
 		}
 
 		public Boolean getActive() {
