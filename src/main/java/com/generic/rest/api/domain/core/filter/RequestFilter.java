@@ -30,34 +30,21 @@ public class RequestFilter {
 			parseFilterOperators();
 		}
 
-		if (projection != null) {
-			projection = StringParserUtils.replace(StringParserUtils.replace(projection, "[", ""), "]", "");
-		}
-		
-		if (sum != null) {
-			sum = StringParserUtils.replace(StringParserUtils.replace(sum, "[", ""), "]", "");
-		}
-		
-		if (avg != null) {
-			avg = StringParserUtils.replace(StringParserUtils.replace(avg, "[", ""), "]", "");
-		}
-		
-		if (count != null) {
-			count = StringParserUtils.replace(StringParserUtils.replace(count, "[", ""), "]", "");
-		}
-		
-		if (countDistinct != null) {
-			countDistinct = StringParserUtils.replace(StringParserUtils.replace(countDistinct, "[", ""), "]", "");
-		}
-		
-		
-		if (groupBy != null) {
-			groupBy = StringParserUtils.replace(StringParserUtils.replace(groupBy, "[", ""), "]", "");
-		}
+		projection = normalizeSymbol(projection);
+		sum = normalizeSymbol(sum);
+		avg = normalizeSymbol(avg);
+		count = normalizeSymbol(count);
+		countDistinct = normalizeSymbol(countDistinct);
+		groupBy = normalizeSymbol(groupBy);
+		sort = normalizeSymbol(sort);
+	}
 
-		if (sort != null) {
-			sort = StringParserUtils.replace(StringParserUtils.replace(sort, "[", ""), "]", "");
+	private String normalizeSymbol(String symbol) {
+		if (symbol != null) {
+			symbol = StringParserUtils.replace(StringParserUtils.replace(symbol, "[", ""), "]", "");
 		}
+		
+		return symbol;
 	}
 
 	private void parseFilterOperators() {
