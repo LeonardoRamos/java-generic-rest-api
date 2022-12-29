@@ -42,6 +42,7 @@ public class BaseApiEntity extends BaseEntity {
 		this.setCount(builder.getCount());
 	}
 	
+	@Override
 	@JsonIgnore
 	public Long getId() {
 		return super.getId();

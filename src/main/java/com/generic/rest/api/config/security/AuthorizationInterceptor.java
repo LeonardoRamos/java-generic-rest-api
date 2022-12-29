@@ -9,7 +9,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.generic.rest.api.Constants.MSG_ERROR;
+import com.generic.rest.api.Constants.MSGERROR;
 import com.generic.rest.api.exception.UnauthorizedApiException;
 import com.generic.rest.api.service.TokenAuthenticationService;
 
@@ -20,44 +20,33 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
 	private TokenAuthenticationService tokenAuthenticationService;
 	
 	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object objectHandler) throws Exception {
-		try {
-			Boolean hasAuthorization = Boolean.TRUE;
-	         
-			if (objectHandler instanceof HandlerMethod) {
-				HandlerMethod handler = (HandlerMethod) objectHandler;
-	            
-				WithoutSecurity withoutSecurity = handler.getMethodAnnotation(WithoutSecurity.class);
-	            if (withoutSecurity != null) {
-	            	return hasAuthorization;
-	            }
-				
-				String token = tokenAuthenticationService.getTokenFromRequest((HttpServletRequest) request);
-	            if (token == null || "".equals(token)) {
-	            	hasAuthorization = Boolean.FALSE;
-	    		
-	            } else if (!tokenAuthenticationService.validateToken(token)) {
-    				hasAuthorization = Boolean.FALSE;
-	    		}
-			}
-	            
-			if (!hasAuthorization) {
-	           throw new UnauthorizedApiException(MSG_ERROR.AUTHORIZATION_TOKEN_NOT_VALID);
-	        } 
-	        
-	        return hasAuthorization;
-
-		} catch (Exception e) {
-			throw e;
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object objectHandler) {
+		if (objectHandler instanceof HandlerMethod) {
+			HandlerMethod handler = (HandlerMethod) objectHandler;
+            
+			WithoutSecurity withoutSecurity = handler.getMethodAnnotation(WithoutSecurity.class);
+            if (withoutSecurity == null) {
+            	
+            	String token = tokenAuthenticationService.getTokenFromRequest(request);
+            	if (token == null || "".equals(token) || Boolean.FALSE.equals(tokenAuthenticationService.validateToken(token))) {
+            		throw new UnauthorizedApiException(MSGERROR.AUTHORIZATION_TOKEN_NOT_VALID);
+            	}
+            }
 		}
+            
+        return Boolean.TRUE;
 	}
 
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-			ModelAndView modelAndView) throws Exception {}
+			ModelAndView modelAndView) throws Exception {
+		/* Does not need postHandle implementation */
+	}
 
 	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
-			throws Exception {}
+			throws Exception {
+		/* Does not need afterCompletion implementation */
+	}
 	
 }

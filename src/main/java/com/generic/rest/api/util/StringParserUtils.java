@@ -5,6 +5,10 @@ import java.util.List;
 
 public class StringParserUtils {
 	
+	private StringParserUtils() {
+		
+	}
+	
 	public static List<String> splitStringList(String value, char delimiter) {
 		List<String> values = new ArrayList<>();
 		

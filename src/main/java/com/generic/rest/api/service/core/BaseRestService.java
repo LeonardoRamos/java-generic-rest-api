@@ -1,29 +1,30 @@
 package com.generic.rest.api.service.core;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.stereotype.Service;
 
-import com.generic.rest.api.Constants.MSG_ERROR;
+import com.generic.rest.api.Constants.MSGERROR;
 import com.generic.rest.api.domain.core.BaseEntity;
 import com.generic.rest.api.exception.ApiException;
 import com.generic.rest.api.exception.NotFoundApiException;
 import com.generic.rest.api.repository.core.BaseRepository;
 
 @Service
-public abstract class BaseRestService<ENTITY extends BaseEntity, REPOSITORY extends BaseRepository<ENTITY>> 
-	extends ApiRestService<ENTITY, REPOSITORY> {
+public abstract class BaseRestService<E extends BaseEntity, R extends BaseRepository<E>> 
+	extends ApiRestService<E, R> {
 	
-	public ENTITY findById(Long id) throws NotFoundApiException {
-		ENTITY entity = (ENTITY) getRepository().getOne(id);
-		
-		if (entity == null) {
-			throw new NotFoundApiException(String.format(MSG_ERROR.BASE_ENTITY_NOT_FOUND_ERROR, id));
+	public E findById(Long id) throws NotFoundApiException {
+		try {
+			return getRepository().getOne(id);
+			
+		} catch (EntityNotFoundException e) {
+			throw new NotFoundApiException(String.format(MSGERROR.BASE_ENTITY_NOT_FOUND_ERROR, id));
 		}
-		
-		return entity;
 	}
 	
 	@Override
-	public ENTITY update(ENTITY entity) throws ApiException {
+	public E update(E entity) throws ApiException {
 		validateExists(entity.getId());
 		
 		return getRepository().saveAndFlush(entity);
@@ -40,13 +41,13 @@ public abstract class BaseRestService<ENTITY extends BaseEntity, REPOSITORY exte
 	private void validateExists(Long id) throws NotFoundApiException {
 		Boolean existsEntity = getRepository().existsById(id);
 		
-		if (!existsEntity) {
-			throw new NotFoundApiException(String.format(MSG_ERROR.BASE_ENTITY_NOT_FOUND_ERROR, id));
+		if (Boolean.FALSE.equals(existsEntity)) {
+			throw new NotFoundApiException(String.format(MSGERROR.BASE_ENTITY_NOT_FOUND_ERROR, id));
 		}
 	}
    
 	@Override
-   	public ENTITY save(ENTITY entity) throws ApiException {
+   	public E save(E entity) throws ApiException {
 	   	return getRepository().saveAndFlush(entity);
    	}
 	

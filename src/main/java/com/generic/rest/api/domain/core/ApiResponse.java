@@ -2,16 +2,16 @@ package com.generic.rest.api.domain.core;
 
 import java.util.List;
 
-public class ApiResponse<ENTITY extends BaseEntity> {
+public class ApiResponse<E extends BaseEntity> {
 	
-	private List<ENTITY> records;
+	private List<E> records;
 	private ApiMetadata metadata;
 	
-	public List<ENTITY> getRecords() {
+	public List<E> getRecords() {
 		return records;
 	}
 
-	public void setRecords(List<ENTITY> records) {
+	public void setRecords(List<E> records) {
 		this.records = records;
 	}
 

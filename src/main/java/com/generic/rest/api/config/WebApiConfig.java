@@ -23,9 +23,7 @@ public class WebApiConfig {
 	
 	@Bean
 	public Jackson2ObjectMapperBuilderCustomizer jacksonObjectMapperCustomization() {
-        return builder -> {
-        	builder.timeZone(TimeZone.getDefault());
-        };
+        return builder -> builder.timeZone(TimeZone.getDefault());
 	}
 	
 }

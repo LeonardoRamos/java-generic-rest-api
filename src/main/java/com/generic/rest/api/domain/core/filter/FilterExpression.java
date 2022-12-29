@@ -3,7 +3,7 @@ package com.generic.rest.api.domain.core.filter;
 public class FilterExpression {
     
     private FilterField filterField;
-    private FilterExpression filterExpression;
+    private FilterExpression nestedFilterExpression;
     private LogicOperator logicOperator;
     
     public FilterField getFilterField() {
@@ -14,12 +14,12 @@ public class FilterExpression {
         this.filterField = filterField;
     }
     
-    public FilterExpression getFilterExpression() {
-        return filterExpression;
+    public FilterExpression getFilterNestedExpression() {
+        return nestedFilterExpression;
     }
     
-    public void setFilterExpression(FilterExpression expression) {
-        this.filterExpression = expression;
+    public void setNestedFilterExpression(FilterExpression nestedFilterExpression) {
+        this.nestedFilterExpression = nestedFilterExpression;
     }
 
 	public LogicOperator getLogicOperator() {
@@ -40,7 +40,8 @@ public class FilterExpression {
 		FilterExpression initialExpression = currentExpression;
         StringBuilder word = new StringBuilder();
         
-        for (int i = 0; i < expressionString.length(); i++) {
+        Integer i = 0;
+        while (i < expressionString.length()) {
             
         	if (expressionString.charAt(i) != '_') {
                 word.append(expressionString.charAt(i));
@@ -60,10 +61,12 @@ public class FilterExpression {
             		word.append(expressionString.charAt(i));
             	}
             }
+        	
+        	i++;
         }
         
         currentExpression.setFilterField(FilterField.buildFilterField(word.toString().trim()));
-        currentExpression = processNewExpressionNode(currentExpression);
+        processNewExpressionNode(currentExpression);
         
         return initialExpression;
 	}
@@ -71,8 +74,8 @@ public class FilterExpression {
 	private static FilterExpression processNewExpressionNode(FilterExpression currentExpression) {
 		if (currentExpression.getLogicOperator() != null) {
     		FilterExpression newExpression = new FilterExpression();
-    		currentExpression.setFilterExpression(newExpression);
-    		currentExpression = currentExpression.getFilterExpression();
+    		currentExpression.setNestedFilterExpression(newExpression);
+    		currentExpression = currentExpression.getFilterNestedExpression();
     	}
 		
 		return currentExpression;
@@ -95,7 +98,7 @@ public class FilterExpression {
 		    	}
 		    }
 		    
-		} while (appendOperation);
+		} while (Boolean.TRUE.equals(appendOperation));
 		
 		return LogicOperator.getLogicOperator(logicOperator.toString().trim());
 	}
@@ -103,7 +106,7 @@ public class FilterExpression {
 	@Override
 	public String toString() {
 		return "Expression [filterField=" + filterField + ", logicOperator=" + logicOperator + 
-				", expression=" + filterExpression +  "]";
+				", expression=" + nestedFilterExpression +  "]";
 	}
 	
 }

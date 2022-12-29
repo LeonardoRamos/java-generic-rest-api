@@ -39,7 +39,8 @@ public class FilterField {
 		
         StringBuilder word = new StringBuilder();
         
-        for (int i = 0; i < logicExpression.length(); i++) {
+        Integer i = 0;
+        while (i < logicExpression.length()) {
           
     		if (logicExpression.charAt(i) != '|') {
                 word.append(logicExpression.charAt(i));
@@ -53,6 +54,8 @@ public class FilterField {
                 i += filterOperator.getParseableOperator().length() - 1;
                 word = new StringBuilder();
     		}
+    		
+    		i++;
         }
         
         filterField.setValue(word.toString().trim());
@@ -77,7 +80,7 @@ public class FilterField {
 		    	}
 		    }
 			
-		} while (appendOperation);
+		} while (Boolean.TRUE.equals(appendOperation));
 		
 		return FilterOperator.getFilterOperator(operation.toString().trim());
 	}

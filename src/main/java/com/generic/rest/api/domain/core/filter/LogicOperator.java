@@ -22,10 +22,10 @@ public enum LogicOperator {
 	}
 	
 	public static LogicOperator getLogicOperator(String logicalOperator) {
-		if (LogicOperator.isOrOperator(logicalOperator)) {
+		if (Boolean.TRUE.equals(LogicOperator.isOrOperator(logicalOperator))) {
 			return LogicOperator.OR;
 		
-		} else if (LogicOperator.isAndOperator(logicalOperator)) {
+		} else if (Boolean.TRUE.equals(LogicOperator.isAndOperator(logicalOperator))) {
 			return LogicOperator.AND;
 		}
 		

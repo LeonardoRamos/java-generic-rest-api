@@ -16,10 +16,8 @@ import javax.persistence.criteria.Selection;
 
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.generic.rest.api.Constants;
-import com.generic.rest.api.Constants.MSG_ERROR;
+import com.generic.rest.api.Constants.MSGERROR;
 import com.generic.rest.api.domain.core.filter.FilterExpression;
 import com.generic.rest.api.domain.core.filter.FilterField;
 import com.generic.rest.api.domain.core.filter.FilterOrder;
@@ -31,7 +29,7 @@ import com.generic.rest.api.util.StringParserUtils;
 
 @Component
 @SuppressWarnings({ "unchecked", "rawtypes" } )
-public class ApiQueryBuilder<ENTITY> {
+public class ApiQueryBuilder<E> {
 	
 	public Boolean containsMultiValuedProjection(List<Selection<? extends Object>> projection) {
 		if (projection == null || projection.isEmpty()) {
@@ -49,27 +47,27 @@ public class ApiQueryBuilder<ENTITY> {
 		return Boolean.FALSE;
 	}
 	
-	public List<Selection<? extends Object>> getGroupByFields(RequestFilter requestFilter, Root<?> root, Class<ENTITY> entityClass) throws BadRequestApiException {
+	public List<Selection<? extends Object>> getGroupByFields(RequestFilter requestFilter, Root<?> root, Class<E> entityClass) throws BadRequestApiException {
 		try {
 			List<String> groupByFields = requestFilter.getParsedGroupBy();
 			return buildProjectionSelection(root, entityClass, groupByFields);
 			
 		} catch (Exception e) {
-			throw new BadRequestApiException(String.format(MSG_ERROR.PARSE_PROJECTIONS_ERROR, requestFilter.getProjection()), e);
+			throw new BadRequestApiException(String.format(MSGERROR.PARSE_PROJECTIONS_ERROR, requestFilter.getProjection()), e);
 		}
 	}
 	
-	public List<Selection<? extends Object>> getProjectionFields(RequestFilter requestFilter, Root<?> root, Class<ENTITY> entityClass) throws BadRequestApiException {
+	public List<Selection<? extends Object>> getProjectionFields(RequestFilter requestFilter, Root<?> root, Class<E> entityClass) throws BadRequestApiException {
 		try {
 			List<String> projectionFields = requestFilter.getParsedProjection();
 			return buildProjectionSelection(root, entityClass, projectionFields);
 			
 		} catch (Exception e) {
-			throw new BadRequestApiException(String.format(MSG_ERROR.PARSE_PROJECTIONS_ERROR, requestFilter.getProjection()), e);
+			throw new BadRequestApiException(String.format(MSGERROR.PARSE_PROJECTIONS_ERROR, requestFilter.getProjection()), e);
 		}
 	}
 	
-	private List<Selection<? extends Object>> buildProjectionSelection(Root<?> root, Class<ENTITY> entityClass,
+	private List<Selection<? extends Object>> buildProjectionSelection(Root<?> root, Class<E> entityClass,
 			List<String> projectionFields) throws NoSuchFieldException {
 		
 		List<Selection<? extends Object>> projection = new ArrayList<>();
@@ -85,7 +83,7 @@ public class ApiQueryBuilder<ENTITY> {
 		return projection;
 	}
 	
-	public List<Selection<? extends Object>> buildAggregateSelection(Root<?> root, CriteriaBuilder criteriaBuilder, Class<ENTITY> entityClass,
+	public List<Selection<? extends Object>> buildAggregateSelection(Root<?> root, CriteriaBuilder criteriaBuilder, Class<E> entityClass,
 			RequestFilter requestFilter) throws BadRequestApiException {
 		try {
 			List<String> sumFields = requestFilter.getParsedSum();
@@ -97,49 +95,43 @@ public class ApiQueryBuilder<ENTITY> {
 			List<Selection<? extends Object>> aggregationFields = new ArrayList<>();
 			
 			if (!sumFields.isEmpty()) {
-				for (String fieldName : sumFields) {
-					List<Field> fields = splitFields(entityClass, fieldName);
-					aggregationFields.add(criteriaBuilder.sum(buildFieldExpression(fields, root)));
-				}
+				addAggregationFields(root, criteriaBuilder, entityClass, sumFields, aggregationFields);
 			}
 			
 			if (!countFields.isEmpty()) {
-				for (String fieldName : countFields) {
-					List<Field> fields = splitFields(entityClass, fieldName);
-					aggregationFields.add(criteriaBuilder.count(buildFieldExpression(fields, root)));
-				}
+				addAggregationFields(root, criteriaBuilder, entityClass, countFields, aggregationFields);
 			}
 			
 			if (!countDistinctFields.isEmpty()) {
-				for (String fieldName : countDistinctFields) {
-					List<Field> fields = splitFields(entityClass, fieldName);
-					aggregationFields.add(criteriaBuilder.countDistinct(buildFieldExpression(fields, root)));
-				}
+				addAggregationFields(root, criteriaBuilder, entityClass, countDistinctFields, aggregationFields);
 			}
 			
 			if (!avgFields.isEmpty()) {
-				for (String fieldName : avgFields) {
-					List<Field> fields = splitFields(entityClass, fieldName);
-					aggregationFields.add(criteriaBuilder.avg(buildFieldExpression(fields, root)));
-				}
+				addAggregationFields(root, criteriaBuilder, entityClass, avgFields, aggregationFields);
 			}
 			
 			if (!groupByFields.isEmpty()) {
-				for (String fieldName : groupByFields) {
-					List<Field> fields = splitFields(entityClass, fieldName);
-					aggregationFields.add(buildFieldExpression(fields, root));
-				}
+				addAggregationFields(root, criteriaBuilder, entityClass, groupByFields, aggregationFields);
 			}
 			
 			return aggregationFields;
 			
 		} catch (Exception e) {
-			throw new BadRequestApiException(String.format(MSG_ERROR.PARSE_PROJECTIONS_ERROR, requestFilter.getProjection()), e);
+			throw new BadRequestApiException(String.format(MSGERROR.PARSE_PROJECTIONS_ERROR, requestFilter.getProjection()), e);
+		}
+	}
+
+	private void addAggregationFields(Root<?> root, CriteriaBuilder criteriaBuilder, Class<E> entityClass,
+			List<String> sumFields, List<Selection<? extends Object>> aggregationFields) throws NoSuchFieldException {
+		
+		for (String fieldName : sumFields) {
+			List<Field> fields = splitFields(entityClass, fieldName);
+			aggregationFields.add(criteriaBuilder.sum(buildFieldExpression(fields, root)));
 		}
 	}
 
 	public List<Predicate> getRestrictions(
-			Class<ENTITY> entityClass,
+			Class<E> entityClass,
 			RequestFilter requestFilter, 
 			CriteriaBuilder criteriaBuilder,
 			Root<?> root) throws BadRequestApiException {
@@ -153,14 +145,7 @@ public class ApiQueryBuilder<ENTITY> {
 				if (currentExpression.getFilterField() != null) {
 					if (LogicOperator.OR.equals(currentExpression.getLogicOperator())) {
 						
-						do {
-							conjunctionRestrictions.add(buildPredicate(entityClass, currentExpression.getFilterField(), criteriaBuilder, root));
-							currentExpression = currentExpression.getFilterExpression();
-						} while (currentExpression != null && LogicOperator.OR.equals(currentExpression.getLogicOperator()));
-						
-						if (currentExpression != null && currentExpression.getFilterField() != null) {
-							conjunctionRestrictions.add(buildPredicate(entityClass, currentExpression.getFilterField(), criteriaBuilder, root));
-						}
+						currentExpression = getOrRestrictions(entityClass, criteriaBuilder, root, currentExpression, conjunctionRestrictions);
 						
 						List<Predicate> orParsedRestrictions = new ArrayList<>();
 						orParsedRestrictions.add(criteriaBuilder.or(conjunctionRestrictions.toArray(new Predicate[]{})));
@@ -173,68 +158,84 @@ public class ApiQueryBuilder<ENTITY> {
 					}
 				}
 				
-				currentExpression = currentExpression.getFilterExpression();
+				currentExpression = currentExpression != null ?currentExpression.getFilterNestedExpression() : currentExpression;
 			}
 	        
 			return restrictions;
 		
 		} catch (Exception e) {
-			throw new BadRequestApiException(String.format(MSG_ERROR.PARSE_FILTER_FIELDS_ERROR, requestFilter.getFilter()), e);
+			throw new BadRequestApiException(String.format(MSGERROR.PARSE_FILTER_FIELDS_ERROR, requestFilter.getFilter()), e);
 		}
 	}
 
+	private FilterExpression getOrRestrictions(Class<E> entityClass, CriteriaBuilder criteriaBuilder, Root<?> root,
+			FilterExpression currentExpression, List<Predicate> conjunctionRestrictions)
+			throws NoSuchFieldException, IOException {
+		
+		do {
+			conjunctionRestrictions.add(buildPredicate(entityClass, currentExpression.getFilterField(), criteriaBuilder, root));
+			currentExpression = currentExpression.getFilterNestedExpression();
+		} while (currentExpression != null && LogicOperator.OR.equals(currentExpression.getLogicOperator()));
+		
+		if (currentExpression != null && currentExpression.getFilterField() != null) {
+			conjunctionRestrictions.add(buildPredicate(entityClass, currentExpression.getFilterField(), criteriaBuilder, root));
+		}
+		
+		return currentExpression;
+	}
+
 	private Predicate buildPredicate(
-			Class<ENTITY> entityClass,
+			Class<E> entityClass,
 			FilterField filterField, 
 			CriteriaBuilder criteriaBuilder, 
-			Root<?> root) throws NoSuchFieldException, SecurityException, JsonParseException, JsonMappingException, IOException {
-		
+			Root<?> root) throws NoSuchFieldException, IOException {
+
 		List<Field> fields = splitFields(entityClass, filterField.getField());
 		Field field = null;
 		
 		switch (filterField.getFilterOperator()) {
 			case IN:
-				field = getSignificantField(entityClass, fields);
+				field = getSignificantField(fields);
 				return buildFieldExpression(fields, root)
 						.in(ReflectionUtils.getFieldList(
 								StringParserUtils.replace(StringParserUtils.replace(filterField.getValue(), "(", ""), ")", ""),
 								field.getType()));
 			case OU:
-				field = getSignificantField(entityClass, fields);
+				field = getSignificantField(fields);
 				return buildFieldExpression(fields, root)
 						.in(ReflectionUtils.getFieldList(filterField.getValue(), field.getType())).not();
 			case GE:
 				return criteriaBuilder.greaterThanOrEqualTo(buildFieldExpression(
-						fields, root), (Comparable) getTypifiedValue(entityClass, filterField, root, fields));
+						fields, root), (Comparable) getTypifiedValue(filterField, fields));
 			case GT:
 				return criteriaBuilder.greaterThan(buildFieldExpression(
-						fields, root), (Comparable) getTypifiedValue(entityClass, filterField, root, fields));
+						fields, root), (Comparable) getTypifiedValue(filterField, fields));
 			case LE:
 				return criteriaBuilder.lessThanOrEqualTo(buildFieldExpression(
-						fields, root), (Comparable) getTypifiedValue(entityClass, filterField, root, fields));
+						fields, root), (Comparable) getTypifiedValue(filterField, fields));
 			case LT:
 				return criteriaBuilder.lessThan(buildFieldExpression(
-						fields, root), (Comparable) getTypifiedValue(entityClass, filterField, root, fields));
+						fields, root), (Comparable) getTypifiedValue(filterField, fields));
 			case NE:
 				if (Constants.NULL_VALUE.equals(filterField.getValue())) {
 					return criteriaBuilder.isNotNull(buildFieldExpression(fields, root));
 				}
 				return criteriaBuilder.notEqual(buildFieldExpression(
-						fields, root), (Comparable) getTypifiedValue(entityClass, filterField, root, fields));
+						fields, root), getTypifiedValue(filterField, fields));
 			case LK:
 				return criteriaBuilder.like(criteriaBuilder.upper(buildFieldExpression(fields, root)), 
-						"%" + ((String) getTypifiedValue(entityClass, filterField, root, fields)).toUpperCase() + "%");
+						"%" + ((String) getTypifiedValue(filterField, fields)).toUpperCase() + "%");
 			case EQ:
 			default:
 				if (Constants.NULL_VALUE.equals(filterField.getValue())) {
 					return criteriaBuilder.isNull(buildFieldExpression(fields, root));
 				}
 				return criteriaBuilder.equal(buildFieldExpression(
-						fields, root), (Comparable) getTypifiedValue(entityClass, filterField, root, fields));
+						fields, root), getTypifiedValue(filterField, fields));
 		}
 	}
 
-	private List<Field> splitFields(Class<ENTITY> entityClass, String fieldName) throws NoSuchFieldException, SecurityException {
+	private List<Field> splitFields(Class<E> entityClass, String fieldName) throws NoSuchFieldException, SecurityException {
 		List<Field> fields = new ArrayList<>();
 		List<String> attributeNames =  StringParserUtils.splitStringList(fieldName, '.');
 		Class<?> currentFieldClass = entityClass;
@@ -248,22 +249,23 @@ public class ApiQueryBuilder<ENTITY> {
 		return fields;
 	}
 
-	private Object getTypifiedValue(Class<ENTITY> entityClass, FilterField filterField, Root<?> root, List<Field> fields)
-			throws NoSuchFieldException, JsonParseException, JsonMappingException, IOException {
-		Field field = getSignificantField(entityClass, fields);
+	private Object getTypifiedValue(FilterField filterField, List<Field> fields)
+			throws IOException, NoSuchFieldException {
+		
+		Field field = getSignificantField(fields);
 		return ReflectionUtils.getEntityValueParsed(filterField.getValue(), field.getType());
 	}
 
-	private Field getSignificantField(Class<ENTITY> entityClass, List<Field> fields) throws NoSuchFieldException {
+	private Field getSignificantField(List<Field> fields) throws NoSuchFieldException {
 		if (fields.isEmpty()) {
-			return null;
+			throw new NoSuchFieldException();
 		}
 		
 		return fields.get(fields.size() - 1);
 	}
 	
-	private Expression buildFieldExpression(List<Field> fields, Root<?> root) {
-		Path<ENTITY> expressionPath = null;
+	private Expression buildFieldExpression(List<Field> fields, Root<?> root) throws NoSuchFieldException {
+		Path<E> expressionPath = null;
 		
 		for (Field field : fields) {
 			if (expressionPath == null) {
@@ -274,7 +276,11 @@ public class ApiQueryBuilder<ENTITY> {
 				expressionPath.alias(field.getName());
 			}
 		}
-
+		
+		if (expressionPath == null) {
+			throw new NoSuchFieldException();
+		}
+		
 		return expressionPath;
 	}
 	
@@ -282,7 +288,7 @@ public class ApiQueryBuilder<ENTITY> {
 			RequestFilter requestFilter, 
 			CriteriaBuilder criteriaBuilder,
 			Root<?> root,
-			Class<ENTITY> entityClass) throws BadRequestApiException {
+			Class<E> entityClass) throws BadRequestApiException {
 		
 		try {
 			List<FilterOrder> filterOrders = FilterOrder.buildFilterOrders(requestFilter.getSort());
@@ -308,7 +314,7 @@ public class ApiQueryBuilder<ENTITY> {
 			return orders;
 		
 		} catch (Exception e) {
-			throw new BadRequestApiException(String.format(MSG_ERROR.PARSE_SORT_ORDER_ERROR, requestFilter.getSort()));
+			throw new BadRequestApiException(String.format(MSGERROR.PARSE_SORT_ORDER_ERROR, requestFilter.getSort()));
 		}
 	}
 	

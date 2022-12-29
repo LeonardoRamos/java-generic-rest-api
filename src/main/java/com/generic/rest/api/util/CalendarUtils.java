@@ -10,9 +10,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.generic.rest.api.Constants;
-import com.generic.rest.api.Constants.MSG_ERROR;
+import com.generic.rest.api.Constants.MSGERROR;
 
 public class CalendarUtils {
+	
+	private CalendarUtils() {
+		
+	}
 	
 	private static final Logger log = LoggerFactory.getLogger(CalendarUtils.class);
 	
@@ -29,7 +33,7 @@ public class CalendarUtils {
 			calendar.setTime(simpleDateFormat.parse(dateText));
 		} 
 		catch (ParseException e) {
-			log.error(MSG_ERROR.ERROR_PARSE_DATE, dateText, e);
+			log.error(MSGERROR.ERROR_PARSE_DATE, dateText, e);
 			return null;
 		}
 		

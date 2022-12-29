@@ -17,23 +17,23 @@ import com.generic.rest.api.exception.ApiException;
 import com.generic.rest.api.service.core.BaseRestService;
 
 @SuppressWarnings({ "rawtypes", "unchecked"} )
-public abstract class BaseRestController<ENTITY extends BaseEntity, SERVICE extends BaseRestService> 
-	extends ApiRestController<ENTITY, SERVICE> {
+public abstract class BaseRestController<E extends BaseEntity, S extends BaseRestService> 
+	extends ApiRestController<E, S> {
 	
 	private static final Logger log = LoggerFactory.getLogger(BaseRestController.class);
 	
 	@GetMapping(value = CONTROLLER.ID_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ENTITY> getOne(@PathVariable(CONTROLLER.ID) Long id) throws ApiException {
+    public ResponseEntity<E> getOne(@PathVariable(CONTROLLER.ID) Long id) throws ApiException {
     	log.info("Processing get of entity of id: [{}]", id);
-		return (ResponseEntity<ENTITY>) new ResponseEntity<>(getService().findById(id), HttpStatus.OK);
+		return (ResponseEntity<E>) new ResponseEntity<>(getService().findById(id), HttpStatus.OK);
     }
 	
     @PutMapping(value = CONTROLLER.ID_PATH, 
 			consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ENTITY> update(@PathVariable(CONTROLLER.ID) Long id, 
-    		@RequestBody ENTITY entity) throws ApiException {
+    public ResponseEntity<E> update(@PathVariable(CONTROLLER.ID) Long id, 
+    		@RequestBody E entity) throws ApiException {
     	log.info("Processing update of entity of id: [{}]", id);
-		return (ResponseEntity<ENTITY>) new ResponseEntity<>(getService().update(entity), HttpStatus.OK);
+		return (ResponseEntity<E>) new ResponseEntity<>(getService().update(entity), HttpStatus.OK);
     }
     
     @DeleteMapping(value = CONTROLLER.ID_PATH, produces = MediaType.APPLICATION_JSON_VALUE)

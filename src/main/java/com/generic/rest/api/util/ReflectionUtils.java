@@ -8,17 +8,19 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.generic.rest.api.Constants;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class ReflectionUtils {
 	
+	private ReflectionUtils() {
+		
+	}
+	
 	private static ObjectMapper mapper = new ObjectMapper();
 	
-	public static List<Object> getFieldList(String value, Class<?> clazz) throws JsonParseException, JsonMappingException, IOException {
+	public static List<Object> getFieldList(String value, Class<?> clazz) throws IOException {
 		List<Object> values = new ArrayList<>();
 		StringBuilder word = new StringBuilder();
 		
@@ -56,7 +58,7 @@ public class ReflectionUtils {
 		}
 	}
 	
-	public static Object getEntityValueParsed(String value, Class<?> clazz) throws JsonParseException, JsonMappingException, IOException {
+	public static Object getEntityValueParsed(String value, Class<?> clazz) throws IOException {
 		if (value != null && !"".equals(value)) {
 			if (clazz.equals(Long.class)) {
 				return Double.valueOf(value).longValue();
@@ -77,20 +79,13 @@ public class ReflectionUtils {
 				return Double.valueOf(value);
 			
 			} else if (clazz.equals(Calendar.class)) {
-				if (StringParserUtils.isNumeric(value)) {
-					return CalendarUtils.createCalendarFromMiliseconds(Double.valueOf(value).longValue());
-				}
-				return CalendarUtils.createCalendarFromString(value, Constants.DEFAULT_DATE_FORMAT);
+				return getCalendarFieldValue(value);
 			
 			} else if (clazz.equals(String.class)) {
-				return value.toString();
+				return value;
 			
 			} else if (clazz.isEnum()) {
-				try {
-					return Enum.valueOf((Class<? extends Enum>) clazz, value);
-				} catch (IllegalArgumentException | NullPointerException e) {
-					return value != null ? value.toUpperCase() : value;
-				}
+				return getEnumFieldValue(value, clazz);
 				
 			} else {
 				return mapper.readValue(value, clazz);
@@ -98,6 +93,21 @@ public class ReflectionUtils {
 		}
 		
 		return value;
+	}
+
+	private static Object getEnumFieldValue(String value, Class<?> clazz) {
+		try {
+			return Enum.valueOf((Class<? extends Enum>) clazz, value);
+		} catch (IllegalArgumentException | NullPointerException e) {
+			return value.toUpperCase();
+		}
+	}
+
+	private static Object getCalendarFieldValue(String value) {
+		if (Boolean.TRUE.equals(StringParserUtils.isNumeric(value))) {
+			return CalendarUtils.createCalendarFromMiliseconds(Double.valueOf(value).longValue());
+		}
+		return CalendarUtils.createCalendarFromString(value, Constants.DEFAULT_DATE_FORMAT);
 	}
 	
 }

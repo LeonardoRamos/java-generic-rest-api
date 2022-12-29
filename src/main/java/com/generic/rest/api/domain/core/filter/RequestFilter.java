@@ -17,9 +17,9 @@ public class RequestFilter {
 	private String sort; 
 	private String offset;
 	private String limit;
-	public final Integer DEFAULT_OFFSET = 0;
-	public final Integer DEFAULT_LIMIT = 20;
-	public final Integer MAX_LIMIT = 100;
+	public static final Integer DEFAULT_OFFSET = 0;
+	public static final Integer DEFAULT_LIMIT = 20;
+	public static final Integer MAX_LIMIT = 100;
 	
 	public void processSymbols() {
 		if (filter != null) {
@@ -48,9 +48,8 @@ public class RequestFilter {
 	}
 
 	private void parseFilterOperators() {
-		List<FilterOperator> simpleCharOperator = Arrays.asList(new FilterOperator[] {
-			FilterOperator.EQ, FilterOperator.GT, FilterOperator.LT
-		});
+		FilterOperator[] operators = new FilterOperator[] { FilterOperator.EQ, FilterOperator.GT, FilterOperator.LT };
+		List<FilterOperator> simpleCharOperator = Arrays.asList(operators);
 		
 		for (FilterOperator filterOperator : FilterOperator.values()) {
 			if (!simpleCharOperator.contains(filterOperator)) {

@@ -14,7 +14,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.generic.rest.api.Constants.JWT_AUTH;
+import com.generic.rest.api.Constants.JWTAUTH;
 
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
@@ -30,14 +30,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(authorizationInterceptor)
-			.addPathPatterns(JWT_AUTH.ALL_PATH_CORS_REGEX);
+			.addPathPatterns(JWTAUTH.ALL_PATH_CORS_REGEX);
 	}
 	
 	@Bean
     public CorsConfigurationSource corsConfigurationSource() {
         final CorsConfiguration configuration = new CorsConfiguration();
         
-        configuration.setAllowedOrigins(Arrays.asList(JWT_AUTH.ALL_PATH_ORIGIN_REGEX));
+        configuration.setAllowedOrigins(Arrays.asList(JWTAUTH.ALL_PATH_ORIGIN_REGEX));
         configuration.setAllowedMethods(Arrays.asList(
         		HttpMethod.HEAD.name(), 
         		HttpMethod.OPTIONS.name(), 
@@ -48,15 +48,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
         		HttpMethod.PATCH.name()));
         
         configuration.setAllowCredentials(true);
-        configuration.addExposedHeader(JWT_AUTH.CONTENT_DISPOSITION);
+        configuration.addExposedHeader(JWTAUTH.CONTENT_DISPOSITION);
         configuration.setAllowedHeaders(Arrays.asList(
-        		JWT_AUTH.AUTHORIZATION, 
-        		JWT_AUTH.CACHE_CONTROL, 
-        		JWT_AUTH.CONTENT_TYPE,
-        		JWT_AUTH.X_ACCESS_TOKEN));
+        		JWTAUTH.AUTHORIZATION, 
+        		JWTAUTH.CACHE_CONTROL, 
+        		JWTAUTH.CONTENT_TYPE,
+        		JWTAUTH.X_ACCESS_TOKEN));
 
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration(JWT_AUTH.ALL_PATH_CORS_REGEX, configuration);
+        source.registerCorsConfiguration(JWTAUTH.ALL_PATH_CORS_REGEX, configuration);
         
         return source;
     }

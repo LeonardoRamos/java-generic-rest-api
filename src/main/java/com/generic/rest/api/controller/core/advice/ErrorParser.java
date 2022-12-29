@@ -18,13 +18,13 @@ import org.springframework.validation.ObjectError;
 
 import com.generic.rest.api.Constants;
 import com.generic.rest.api.Constants.ERRORKEYS;
-import com.generic.rest.api.Constants.MSG_ERROR;
+import com.generic.rest.api.Constants.MSGERROR;
 import com.generic.rest.api.exception.ApiException;
 
 @Component
 public class ErrorParser {
 	
-	private static Logger log = LoggerFactory.getLogger(ExceptionHandlerControllerAdvice.class);
+	private static Logger log = LoggerFactory.getLogger(ErrorParser.class);
 
 	public ResponseEntity<Map<String, Object>> createResponseEntity(List<Map<String, String>> errors, HttpStatus status) {
 		return new ResponseEntity<>(Collections.singletonMap(ERRORKEYS.KEY, errors), status);
@@ -34,7 +34,7 @@ public class ErrorParser {
 		List<Map<String, String>> errors = new ArrayList<>();
 
 		if (bindingResult != null) {
-			String message = Constants.MSG_ERROR.VALIDATION_ERROR;
+			String message = Constants.MSGERROR.VALIDATION_ERROR;
 			String code = getErrorCode(message);
 					
 			for (ObjectError objectError: bindingResult.getAllErrors()) {
@@ -121,7 +121,7 @@ public class ErrorParser {
 			log.error(e.getMessage(), e);
 		}
 		
-		return MSG_ERROR.DEFAULT_ERROR_CODE;
+		return MSGERROR.DEFAULT_ERROR_CODE;
 	}
 
 }

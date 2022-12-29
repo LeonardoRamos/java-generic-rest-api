@@ -12,7 +12,7 @@ import org.springframework.data.repository.query.Param;
 import com.generic.rest.api.domain.core.BaseApiEntity;
 
 @NoRepositoryBean
-public interface BaseApiRepository<ENTITY extends BaseApiEntity> extends BaseRepository<ENTITY> {
+public interface BaseApiRepository<E extends BaseApiEntity> extends BaseRepository<E> {
 	
 	@Transactional
 	@Modifying(clearAutomatically = true)
@@ -22,6 +22,6 @@ public interface BaseApiRepository<ENTITY extends BaseApiEntity> extends BaseRep
 	@Transactional
 	Integer deleteByExternalId(String externalId);
 
-	ENTITY findOneByExternalId(String externalId);
+	E findOneByExternalId(String externalId);
 	
 }

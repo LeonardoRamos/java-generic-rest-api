@@ -23,13 +23,13 @@ public class BaseEntity {
 	private Long id;
 	
 	@Transient
-	private Map<String, Object> sum = new HashMap<String, Object>();
+	private Map<String, Object> sum = new HashMap<>();
 	
 	@Transient
-	private Map<String, Object> avg = new HashMap<String, Object>();
+	private Map<String, Object> avg = new HashMap<>();
 	
 	@Transient
-	private Map<String, Object> count = new HashMap<String, Object>();
+	private Map<String, Object> count = new HashMap<>();
 	
 	public BaseEntity() {}
 
@@ -121,9 +121,9 @@ public class BaseEntity {
 	public static class BaseEntityBuilder {
 		
 		private Long id;
-		private Map<String, Object> sum = new HashMap<String, Object>();
-		private Map<String, Object> avg = new HashMap<String, Object>();
-		private Map<String, Object> count = new HashMap<String, Object>();
+		private Map<String, Object> sum = new HashMap<>();
+		private Map<String, Object> avg = new HashMap<>();
+		private Map<String, Object> count = new HashMap<>();
 		
 		public BaseEntityBuilder id(Long id) {
 			this.id = id;

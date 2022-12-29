@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 
 import com.generic.rest.api.Constants;
 import com.generic.rest.api.Constants.CONTROLLER.LOGIN;
-import com.generic.rest.api.Constants.JWT_AUTH;
-import com.generic.rest.api.Constants.MSG_ERROR;
+import com.generic.rest.api.Constants.JWTAUTH;
+import com.generic.rest.api.Constants.MSGERROR;
 import com.generic.rest.api.domain.Role;
 import com.generic.rest.api.domain.User;
 import com.generic.rest.api.exception.ApiException;
@@ -43,14 +43,14 @@ public class UserService extends BaseApiRestService<User, UserRepository> {
 		User userAccount = getUserByEmailAndActive(credentials.get(LOGIN.EMAIL_FIELD), Boolean.TRUE);
 		
 		if (userAccount == null) {
-			throw new AuthenticationCredentialsNotFoundException(MSG_ERROR.AUTHENTICATION_ERROR);
+			throw new AuthenticationCredentialsNotFoundException(MSGERROR.AUTHENTICATION_ERROR);
 		}
 		
-		if (!EncrypterUtils.matchPassword(credentials.get(LOGIN.PASSWORD_FIELD), userAccount.getPassword())) {
-			throw new AuthenticationCredentialsNotFoundException(MSG_ERROR.AUTHENTICATION_ERROR);
+		if (Boolean.FALSE.equals(EncrypterUtils.matchPassword(credentials.get(LOGIN.PASSWORD_FIELD), userAccount.getPassword()))) {
+			throw new AuthenticationCredentialsNotFoundException(MSGERROR.AUTHENTICATION_ERROR);
 		}
 		
-		return Collections.singletonMap(JWT_AUTH.TOKEN, tokenAuthenticationService.generateToken(userAccount));
+		return Collections.singletonMap(JWTAUTH.TOKEN, tokenAuthenticationService.generateToken(userAccount));
 	}
 	
 	@Override
@@ -65,14 +65,14 @@ public class UserService extends BaseApiRestService<User, UserRepository> {
 	
    	public Boolean allowUserAccess(String authorization, String userAccountExternalId) {
    		String token = TokenUtils.getTokenFromAuthorizationHeader(authorization);
-   		String userAccountExternalIdClaim = tokenAuthenticationService.getTokenClaim(token, Constants.JWT_AUTH.CLAIM_USER_EXTERNAL_ID);
+   		String userAccountExternalIdClaim = tokenAuthenticationService.getTokenClaim(token, Constants.JWTAUTH.CLAIM_USER_EXTERNAL_ID);
 		
    		return userAccountExternalId.equals(userAccountExternalIdClaim) || allowAdminAccess(authorization);
    	}
 	
    	public Boolean allowAdminAccess(String authorization) {
    		String token = TokenUtils.getTokenFromAuthorizationHeader(authorization);
-   		String roleClaim = tokenAuthenticationService.getTokenClaim(token, Constants.JWT_AUTH.CLAIM_ROLE);
+   		String roleClaim = tokenAuthenticationService.getTokenClaim(token, Constants.JWTAUTH.CLAIM_ROLE);
 		
    		return Role.ADMIN.name().equals(roleClaim);
    	}

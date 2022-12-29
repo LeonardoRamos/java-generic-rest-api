@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonMappingException.Reference;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
-import com.generic.rest.api.Constants.MSG_ERROR;
+import com.generic.rest.api.Constants.MSGERROR;
 import com.generic.rest.api.exception.ApiException;
 
 @RestControllerAdvice
@@ -51,7 +51,7 @@ public class ExceptionHandlerControllerAdvice {
 	
 	@ExceptionHandler({Exception.class })
 	public ResponseEntity<Map<String, Object>> exception(Exception exception) {
-		return handler(exception, errorParser.formatErrorList(MSG_ERROR.INTERNAL_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+		return handler(exception, errorParser.formatErrorList(MSGERROR.INTERNAL_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	@ExceptionHandler({
@@ -71,57 +71,65 @@ public class ExceptionHandlerControllerAdvice {
 		}
 
 		if (exception instanceof HttpMediaTypeNotSupportedException) {
-			return handler(exception, errorParser.formatErrorList(MSG_ERROR.MEDIA_TYPE_NOT_SUPPORTED), status);
+			return handler(exception, errorParser.formatErrorList(MSGERROR.MEDIA_TYPE_NOT_SUPPORTED), status);
 		}
 		
 		if (exception instanceof HttpRequestMethodNotSupportedException) {
 			HttpRequestMethodNotSupportedException httpRequestMethodNotSupportedException = (HttpRequestMethodNotSupportedException) exception;
-			return handler(exception, errorParser.formatErrorList(MSG_ERROR.METHOD_NOT_SUPPORTED, httpRequestMethodNotSupportedException.getMethod()), status);
+			return handler(exception, errorParser.formatErrorList(MSGERROR.METHOD_NOT_SUPPORTED, httpRequestMethodNotSupportedException.getMethod()), status);
 		
 		}
 		if (exception instanceof HttpMediaTypeNotAcceptableException) {
 			HttpMediaTypeNotAcceptableException httpMediaTypeNotAcceptableException = (HttpMediaTypeNotAcceptableException) exception;
-			return handler(exception, errorParser.formatErrorList(MSG_ERROR.MEDIA_TYPE_NOT_ACCEPTABLE, httpMediaTypeNotAcceptableException.getSupportedMediaTypes().toString()), status);
+			return handler(exception, errorParser.formatErrorList(MSGERROR.MEDIA_TYPE_NOT_ACCEPTABLE, httpMediaTypeNotAcceptableException.getSupportedMediaTypes().toString()), status);
 		}
 
 		if (exception instanceof MissingServletRequestPartException) {
 			MissingServletRequestPartException missingServletRequestPartException = (MissingServletRequestPartException) exception;
-			return handler(exception, errorParser.formatErrorList(MSG_ERROR.PARAMETER_NOT_PRESENT, missingServletRequestPartException.getRequestPartName()), status);
+			return handler(exception, errorParser.formatErrorList(MSGERROR.PARAMETER_NOT_PRESENT, missingServletRequestPartException.getRequestPartName()), status);
 		}
 		
+		return handleFormatExceptions(exception, status);
+	}
+
+	private ResponseEntity<Map<String, Object>> handleFormatExceptions(Exception exception, HttpStatus status) {
 		if (exception instanceof HttpMessageNotReadableException) {
 
 			if (exception.getCause() instanceof UnrecognizedPropertyException) {
 				UnrecognizedPropertyException ex = ((UnrecognizedPropertyException) exception.getCause());
-				return handler(exception, errorParser.formatErrorList(MSG_ERROR.UNRECOGNIZED_FIELD, ex.getPropertyName()), status);
+				return handler(exception, errorParser.formatErrorList(MSGERROR.UNRECOGNIZED_FIELD, ex.getPropertyName()), status);
 
 			} else if (exception.getCause() instanceof InvalidFormatException) {
-				InvalidFormatException ex = ((InvalidFormatException) exception.getCause());
-				StringBuilder path = new StringBuilder();
-
-				for (Reference reference : ex.getPath()) {
-					if (!path.toString().equals("")) {
-						path.append(".");
-					}
-
-					if (reference.getIndex() > - 1) {
-						path.append("[").append(reference.getIndex()).append("]");
-					} else {
-						path.append(reference.getFieldName());
-					}
-				}
-
-				return handler(exception, errorParser.formatErrorList(MSG_ERROR.INVALID_VALUE, path.toString()), status);
+				StringBuilder path = buildFormatErrorPath(exception);
+				return handler(exception, errorParser.formatErrorList(MSGERROR.INVALID_VALUE, path.toString()), status);
 
 			} else if (exception.getCause() instanceof JsonMappingException) {
-				return handler(exception, errorParser.formatErrorList(MSG_ERROR.BODY_INVALID), status);
+				return handler(exception, errorParser.formatErrorList(MSGERROR.BODY_INVALID), status);
 
 			} else {
-				return handler(exception, errorParser.formatErrorList(MSG_ERROR.MESSAGE_NOT_READABLE), status);
+				return handler(exception, errorParser.formatErrorList(MSGERROR.MESSAGE_NOT_READABLE), status);
 			}
 		}
 
-		return handler(exception, errorParser.formatErrorList(MSG_ERROR.BAD_REQUEST_ERROR), status);
+		return handler(exception, errorParser.formatErrorList(MSGERROR.BAD_REQUEST_ERROR), status);
+	}
+
+	private StringBuilder buildFormatErrorPath(Exception exception) {
+		InvalidFormatException ex = ((InvalidFormatException) exception.getCause());
+		StringBuilder path = new StringBuilder();
+
+		for (Reference reference : ex.getPath()) {
+			if (!path.toString().equals("")) {
+				path.append(".");
+			}
+
+			if (reference.getIndex() > - 1) {
+				path.append("[").append(reference.getIndex()).append("]");
+			} else {
+				path.append(reference.getFieldName());
+			}
+		}
+		return path;
 	}
     
 }

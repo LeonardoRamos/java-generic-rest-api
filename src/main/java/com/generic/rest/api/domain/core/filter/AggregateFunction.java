@@ -28,27 +28,23 @@ public enum AggregateFunction {
 		return null;
 	}
 	
-	@SuppressWarnings("unlikely-arg-type")
 	public static Boolean isSumFunction(String aggregateFunction) {
-		return SUM.equals(aggregateFunction) || SUM.name().equals(aggregateFunction) || 
+		return SUM.equals(AggregateFunction.valueOf(aggregateFunction)) || SUM.name().equals(aggregateFunction) || 
 				SUM.getFunction().equals(aggregateFunction);
 	}
 	
-	@SuppressWarnings("unlikely-arg-type")
 	public static Boolean isAvgFunction(String aggregateFunction) {
-		return AVG.equals(aggregateFunction) || AVG.name().equals(aggregateFunction) || 
+		return AVG.equals(AggregateFunction.valueOf(aggregateFunction)) || AVG.name().equals(aggregateFunction) || 
 				AVG.getFunction().equals(aggregateFunction);
 	}
 	
-	@SuppressWarnings("unlikely-arg-type")
 	public static Boolean isCountFunction(String aggregateFunction) {
-		return COUNT.equals(aggregateFunction) || COUNT.name().equals(aggregateFunction) || 
+		return COUNT.equals(AggregateFunction.valueOf(aggregateFunction)) || COUNT.name().equals(aggregateFunction) || 
 				COUNT.getFunction().equals(aggregateFunction);
 	}
 	
-	@SuppressWarnings("unlikely-arg-type")
 	public static Boolean isCountDistinctFunction(String aggregateFunction) {
-		return COUNT_DISTINCT.equals(aggregateFunction) || COUNT_DISTINCT.name().equals(aggregateFunction) || 
+		return COUNT_DISTINCT.equals(AggregateFunction.valueOf(aggregateFunction)) || COUNT_DISTINCT.name().equals(aggregateFunction) || 
 				COUNT_DISTINCT.getFunction().equals(aggregateFunction);
 	}
 	

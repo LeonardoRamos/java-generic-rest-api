@@ -17,23 +17,23 @@ import com.generic.rest.api.exception.ApiException;
 import com.generic.rest.api.service.core.BaseApiRestService;
 
 @SuppressWarnings({ "rawtypes", "unchecked"} )
-public abstract class BaseApiRestController<ENTITY extends BaseApiEntity, SERVICE extends BaseApiRestService>
-	extends ApiRestController<ENTITY, SERVICE> {
+public abstract class BaseApiRestController<E extends BaseApiEntity, S extends BaseApiRestService>
+	extends ApiRestController<E, S> {
 	
 	private static final Logger log = LoggerFactory.getLogger(BaseApiRestController.class);
 	
 	@GetMapping(value = CONTROLLER.EXTERNAL_ID_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ENTITY> getOne(@PathVariable(CONTROLLER.EXTERNAL_ID) String externalId) throws ApiException {
+    public ResponseEntity<E> getOne(@PathVariable(CONTROLLER.EXTERNAL_ID) String externalId) throws ApiException {
     	log.info("Processing get of entity of externalId: [{}]", externalId);
-		return (ResponseEntity<ENTITY>) new ResponseEntity<>(getService().findByExternalId(externalId), HttpStatus.OK);
+		return (ResponseEntity<E>) new ResponseEntity<>(getService().findByExternalId(externalId), HttpStatus.OK);
     }
 	
     @PutMapping(value = CONTROLLER.EXTERNAL_ID_PATH, 
 			consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ENTITY> update(@PathVariable(CONTROLLER.EXTERNAL_ID) String externalId, 
-    		@RequestBody ENTITY entity) throws ApiException {
+    public ResponseEntity<E> update(@PathVariable(CONTROLLER.EXTERNAL_ID) String externalId, 
+    		@RequestBody E entity) throws ApiException {
     	log.info("Processing update of entity of externalId: [{}]", externalId);
-		return (ResponseEntity<ENTITY>) new ResponseEntity<>(getService().update(entity), HttpStatus.OK);
+		return (ResponseEntity<E>) new ResponseEntity<>(getService().update(entity), HttpStatus.OK);
     }
     
     @DeleteMapping(value = CONTROLLER.EXTERNAL_ID_PATH, produces = MediaType.APPLICATION_JSON_VALUE)

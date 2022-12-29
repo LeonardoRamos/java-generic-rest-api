@@ -12,7 +12,7 @@ import org.springframework.boot.actuate.health.Status;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.generic.rest.api.Constants.HEALTH_CHECK;
+import com.generic.rest.api.Constants.HEALTHCHECK;
 
 public class DatabaseHealthIndicator extends AbstractHealthIndicator implements InitializingBean {
 
@@ -24,7 +24,7 @@ public class DatabaseHealthIndicator extends AbstractHealthIndicator implements 
 	}
 
 	public DatabaseHealthIndicator(DataSource dataSource) {
-		super(HEALTH_CHECK.DATABASE.FAILED_MESSAGE);
+		super(HEALTHCHECK.DATABASE.FAILED_MESSAGE);
 		this.dataSource = dataSource;
 		jdbcTemplate = (dataSource != null) ? new JdbcTemplate(dataSource) : null;
 	}
@@ -32,23 +32,23 @@ public class DatabaseHealthIndicator extends AbstractHealthIndicator implements 
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		if (dataSource == null) {
-			throw new IllegalStateException(HEALTH_CHECK.DATABASE.NO_DATASOURCE);
+			throw new IllegalStateException(HEALTHCHECK.DATABASE.NO_DATASOURCE);
 		}
 	}
 
 	@Override
 	protected void doHealthCheck(Health.Builder builder) throws Exception {
 		if (dataSource == null) {
-			builder.up().withDetail(HEALTH_CHECK.DATABASE.KEY, HEALTH_CHECK.DATABASE.UNKNOWN_DATASOURCE);
+			builder.up().withDetail(HEALTHCHECK.DATABASE.KEY, HEALTHCHECK.DATABASE.UNKNOWN_DATASOURCE);
 		
 		} else {
 			doDataSourceHealthCheck(builder);
 		}
 	}
 
-	private void doDataSourceHealthCheck(Health.Builder builder) throws Exception {
-		builder.up().withDetail(HEALTH_CHECK.DATABASE.KEY, getProduct());
-		builder.status(isConnectionValid() ? Status.UP : Status.DOWN);
+	private void doDataSourceHealthCheck(Health.Builder builder) {
+		builder.up().withDetail(HEALTHCHECK.DATABASE.KEY, getProduct());
+		builder.status(Boolean.TRUE.equals(isConnectionValid()) ? Status.UP : Status.DOWN);
 	}
 
 	private String getProduct() {

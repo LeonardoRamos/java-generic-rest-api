@@ -13,11 +13,10 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
 
-import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.generic.rest.api.Constants.MSG_ERROR;
+import com.generic.rest.api.Constants.MSGERROR;
 import com.generic.rest.api.domain.core.BaseEntity;
 import com.generic.rest.api.domain.core.filter.RequestFilter;
 import com.generic.rest.api.exception.BadRequestApiException;
@@ -26,18 +25,18 @@ import com.generic.rest.api.exception.NotFoundApiException;
 import com.generic.rest.api.repository.core.mapper.ApiResultMapper;
 
 @Repository
-public class ApiRepository<ENTITY extends BaseEntity> {
+public class ApiRepository<E extends BaseEntity> {
 	
 	@Autowired
 	private EntityManager entityManager;
 	
 	@Autowired
-	protected ApiQueryBuilder<ENTITY> apiQueryBuilder;
+	protected ApiQueryBuilder<E> apiQueryBuilder;
 	
 	@Autowired
-	protected ApiResultMapper<ENTITY> apiResultMapper;
+	protected ApiResultMapper<E> apiResultMapper;
 	
-	public Long countAll(Class<ENTITY> entityClass, RequestFilter requestFilter) 
+	public Long countAll(Class<E> entityClass, RequestFilter requestFilter) 
 			throws NotFoundApiException, BadRequestApiException, InternalErrorApiException {
 		
 		requestFilter.processSymbols();
@@ -57,22 +56,22 @@ public class ApiRepository<ENTITY extends BaseEntity> {
 		    return entityManager.createQuery(query).getSingleResult();
 		
 		} catch (NoResultException e) {
-			throw new NotFoundApiException(String.format(MSG_ERROR.ENTITIES_NOT_FOUND_ERROR, requestFilter), e);
+			throw new NotFoundApiException(String.format(MSGERROR.ENTITIES_NOT_FOUND_ERROR, requestFilter), e);
 		
 		} catch (PersistenceException e) {
-			throw new BadRequestApiException(String.format(MSG_ERROR.BAD_REQUEST_ERROR, requestFilter), e);
+			throw new BadRequestApiException(String.format(MSGERROR.BAD_REQUEST_ERROR, requestFilter), e);
 		
 		} catch (Exception e) {
-			throw new InternalErrorApiException(String.format(MSG_ERROR.UNEXPECTED_FETCHING_ERROR, requestFilter), e);
+			throw new InternalErrorApiException(String.format(MSGERROR.UNEXPECTED_FETCHING_ERROR, requestFilter), e);
 		}
 	}
 	
-	public List<ENTITY> findAll(Class<ENTITY> entityClass, RequestFilter requestFilter) 
+	public List<E> findAll(Class<E> entityClass, RequestFilter requestFilter) 
 			throws NotFoundApiException, BadRequestApiException, InternalErrorApiException {
 		
 		requestFilter.processSymbols();
 
-		if (requestFilter.hasValidAggregateFunction()) {
+		if (Boolean.TRUE.equals(requestFilter.hasValidAggregateFunction())) {
 			return aggregate(entityClass, requestFilter);
 		}
 		
@@ -98,7 +97,7 @@ public class ApiRepository<ENTITY extends BaseEntity> {
 		}
 		
 		try {
-		    List<Object> result = (List<Object>) entityManager.createQuery(query)
+		    List<Object> result = entityManager.createQuery(query)
 		    		.setMaxResults(requestFilter.getFetchLimit())
 		    		.setFirstResult(requestFilter.getFetchOffset())
 		    		.getResultList();
@@ -106,17 +105,17 @@ public class ApiRepository<ENTITY extends BaseEntity> {
 		    return apiResultMapper.mapResultSet(entityClass, result, projection);
 		    
 		} catch (NoResultException e) {
-			throw new NotFoundApiException(String.format(MSG_ERROR.ENTITIES_NOT_FOUND_ERROR, requestFilter), e);
+			throw new NotFoundApiException(String.format(MSGERROR.ENTITIES_NOT_FOUND_ERROR, requestFilter), e);
 		
-		} catch (PSQLException | PersistenceException | NumberFormatException e) {
-			throw new BadRequestApiException(String.format(MSG_ERROR.BAD_REQUEST_ERROR, requestFilter), e);
+		} catch (PersistenceException | NumberFormatException e) {
+			throw new BadRequestApiException(String.format(MSGERROR.BAD_REQUEST_ERROR, requestFilter), e);
 			
 		} catch (Exception e) {
-			throw new InternalErrorApiException(String.format(MSG_ERROR.UNEXPECTED_FETCHING_ERROR, requestFilter), e);
+			throw new InternalErrorApiException(String.format(MSGERROR.UNEXPECTED_FETCHING_ERROR, requestFilter), e);
 		}
 	}
 	
-	public List<ENTITY> aggregate(Class<ENTITY> entityClass, RequestFilter requestFilter) 
+	public List<E> aggregate(Class<E> entityClass, RequestFilter requestFilter) 
 			throws NotFoundApiException, BadRequestApiException, InternalErrorApiException {
 		
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -126,7 +125,7 @@ public class ApiRepository<ENTITY extends BaseEntity> {
 		List<Selection<? extends Object>> aggregationFields = apiQueryBuilder.buildAggregateSelection(root, criteriaBuilder, entityClass, requestFilter);
 		
 		if (aggregationFields.isEmpty()) {
-			throw new BadRequestApiException(String.format(MSG_ERROR.INVALID_AGGREGATION_ERROR, requestFilter));
+			throw new BadRequestApiException(String.format(MSGERROR.INVALID_AGGREGATION_ERROR, requestFilter));
 		}
 		
 		query.multiselect(aggregationFields.toArray(new Selection[]{}));
@@ -145,19 +144,19 @@ public class ApiRepository<ENTITY extends BaseEntity> {
 		query.groupBy(groupBy.toArray(new Expression[]{}));
 		
 		try {
-		    List<Object> result = (List<Object>) entityManager.createQuery(query)
+		    List<Object> result = entityManager.createQuery(query)
 		    		.getResultList();
 		    
 		    return apiResultMapper.mapResultSet(entityClass, result, aggregationFields);
 		    
 		} catch (NoResultException e) {
-			throw new NotFoundApiException(String.format(MSG_ERROR.ENTITIES_NOT_FOUND_ERROR, requestFilter), e);
+			throw new NotFoundApiException(String.format(MSGERROR.ENTITIES_NOT_FOUND_ERROR, requestFilter), e);
 		
-		} catch (PSQLException | PersistenceException e) {
-			throw new BadRequestApiException(String.format(MSG_ERROR.BAD_REQUEST_ERROR, requestFilter), e);
+		} catch (PersistenceException | ReflectiveOperationException e) {
+			throw new BadRequestApiException(String.format(MSGERROR.BAD_REQUEST_ERROR, requestFilter), e);
 			
 		} catch (Exception e) {
-			throw new InternalErrorApiException(String.format(MSG_ERROR.UNEXPECTED_FETCHING_ERROR, requestFilter), e);
+			throw new InternalErrorApiException(String.format(MSGERROR.UNEXPECTED_FETCHING_ERROR, requestFilter), e);
 		}
 	}
 

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.generic.rest.api.Constants.CONTROLLER;
-import com.generic.rest.api.Constants.JWT_AUTH;
+import com.generic.rest.api.Constants.JWTAUTH;
 import com.generic.rest.api.config.security.WithoutSecurity;
 import com.generic.rest.api.exception.NotFoundApiException;
 import com.generic.rest.api.service.UserService;
@@ -31,7 +31,7 @@ public class AuthenticationController {
 	@WithoutSecurity
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> authenticate(@RequestBody  Map<String, String> credentials) throws NotFoundApiException {
-		log.info("Processing login for user credentials: [{}]", credentials != null ? credentials.get(JWT_AUTH.CLAIM_EMAIL) : null);
+		log.info("Processing login for user credentials: [{}]", credentials != null ? credentials.get(JWTAUTH.CLAIM_EMAIL) : null);
 		return new ResponseEntity<>(userService.attemptAuthentication(credentials), HttpStatus.OK);
 	}
 	
