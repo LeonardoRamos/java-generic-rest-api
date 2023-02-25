@@ -14,11 +14,11 @@ import com.generic.rest.api.Constants;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class ReflectionUtils {
 	
+	private static ObjectMapper mapper = new ObjectMapper();
+
 	private ReflectionUtils() {
 		
 	}
-	
-	private static ObjectMapper mapper = new ObjectMapper();
 	
 	public static List<Object> getFieldList(String value, Class<?> clazz) throws IOException {
 		List<Object> values = new ArrayList<>();
