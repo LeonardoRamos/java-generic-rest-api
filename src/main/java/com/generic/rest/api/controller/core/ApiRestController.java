@@ -33,7 +33,7 @@ public abstract class ApiRestController<E extends BaseEntity, S extends ApiRestS
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<E> insert(@RequestBody E entity) throws ApiException {
     	log.info("Processing insert of data: [{}]", entity);
-		return (ResponseEntity<E>) new ResponseEntity<>(getService().save(entity), HttpStatus.OK);
+		return (ResponseEntity<E>) new ResponseEntity<>(getService().save(entity), HttpStatus.CREATED);
     }
     
 }

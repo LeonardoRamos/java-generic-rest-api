@@ -28,7 +28,7 @@ public class User extends BaseApiEntity {
 	@Column(name = "role")
 	@Enumerated(EnumType.STRING)
 	private Role role;
-	
+
 	@OneToOne(mappedBy = "user")
 	@Cascade(CascadeType.SAVE_UPDATE)
 	private Address address;

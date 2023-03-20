@@ -12,9 +12,11 @@ import com.generic.rest.api.Constants;
 import com.generic.rest.api.Constants.CONTROLLER.LOGIN;
 import com.generic.rest.api.Constants.JWTAUTH;
 import com.generic.rest.api.Constants.MSGERROR;
+import com.generic.rest.api.domain.Address;
 import com.generic.rest.api.domain.Role;
 import com.generic.rest.api.domain.User;
 import com.generic.rest.api.exception.ApiException;
+import com.generic.rest.api.exception.NotFoundApiException;
 import com.generic.rest.api.repository.UserRepository;
 import com.generic.rest.api.service.core.BaseApiRestService;
 import com.generic.rest.api.util.EncrypterUtils;
@@ -25,6 +27,9 @@ public class UserService extends BaseApiRestService<User, UserRepository> {
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private AddressService addressService;
 	
 	@Autowired
 	private TokenAuthenticationService tokenAuthenticationService;
@@ -56,7 +61,43 @@ public class UserService extends BaseApiRestService<User, UserRepository> {
 	@Override
 	public User save(User user) throws ApiException {
 		user.setPassword(EncrypterUtils.encryptPassword(user.getPassword()));
+		
+		setAddress(user);
+		
 		return super.save(user);
+	}
+	
+	@Override
+	public User update(User user) throws ApiException {
+		User userDatabase = getByExternalId(user.getExternalId());
+		
+		if (user.getPassword() == null || "".equals(user.getPassword())) {
+			user.setPassword(userDatabase.getPassword());
+		
+		} else if (!userDatabase.getPassword().equals(user.getPassword())) {
+			user.setPassword(EncrypterUtils.encryptPassword(user.getPassword()));
+		}
+		
+		setAddress(user);
+		
+		return super.update(user);
+	}
+	
+	private void setAddress(User user) {
+		if (user.getAddress().getExternalId() == null || "".equals(user.getAddress().getExternalId())) {
+			user.setAddress(addressService.save(user.getAddress()));
+			return;
+		}
+		
+		try {
+			Address address = addressService.getByExternalId(user.getAddress().getExternalId());
+			
+			user.getAddress().setExternalId(address.getExternalId());
+			user.getAddress().setId(address.getId());
+			
+		} catch (NotFoundApiException e) {
+			user.setAddress(addressService.save(user.getAddress()));
+		}
 	}
 	
 	public User getUserByEmailAndActive(String email, Boolean active) {

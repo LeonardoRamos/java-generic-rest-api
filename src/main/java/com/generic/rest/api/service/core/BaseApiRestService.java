@@ -15,7 +15,7 @@ import com.generic.rest.api.util.KeyUtils;
 public abstract class BaseApiRestService<E extends BaseApiEntity, R extends BaseApiRepository<E>> 
 	extends ApiRestService<E, R>{
 	
-	public E findByExternalId(String externalId) throws NotFoundApiException {
+	public E getByExternalId(String externalId) throws NotFoundApiException {
 		E entity = getRepository().findOneByExternalId(externalId);
 		
 		if (entity == null) {
@@ -28,7 +28,7 @@ public abstract class BaseApiRestService<E extends BaseApiEntity, R extends Base
 	@Override
 	public E update(E entity) throws ApiException {
 		if (entity.getId() == null) {
-			E entityDatabase = findByExternalId(entity.getExternalId());
+			E entityDatabase = getByExternalId(entity.getExternalId());
 			entity.setId(entityDatabase.getId());
 		}
 

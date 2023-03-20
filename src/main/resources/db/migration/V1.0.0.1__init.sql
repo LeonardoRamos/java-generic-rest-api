@@ -1,28 +1,8 @@
-CREATE SEQUENCE country_id_seq
-  	INCREMENT 1
-  	MINVALUE 1
-  	MAXVALUE 9223372036854775807
-  	START 1
-  	CACHE 1;
-
-CREATE SEQUENCE user_account_id_seq
-  	INCREMENT 1
-  	MINVALUE 1
-  	MAXVALUE 9223372036854775807
-  	START 1
-  	CACHE 1;
-
-CREATE SEQUENCE address_id_seq
-  	INCREMENT 1
-  	MINVALUE 1
-  	MAXVALUE 9223372036854775807
-  	START 1
-  	CACHE 1;
   	
 CREATE TYPE enum_user_account_role AS ENUM('ADMIN', 'USER');
 
 CREATE TABLE country(
-	id bigint NOT NULL DEFAULT nextval('country_id_seq'::regclass),
+	id bigint NOT NULL GENERATED ALWAYS AS IDENTITY (MINVALUE 1 START WITH 1),
   	external_id character varying(32) NOT NULL,
   	active boolean NOT NULL,
   	creation_date timestamp with time zone NOT NULL,
@@ -34,7 +14,7 @@ CREATE TABLE country(
 );
 
 CREATE TABLE user_account(
-	id bigint NOT NULL DEFAULT nextval('user_account_id_seq'::regclass),
+	id bigint NOT NULL GENERATED ALWAYS AS IDENTITY (MINVALUE 1 START WITH 1),
   	external_id character varying(32) NOT NULL,
   	active boolean NOT NULL,
   	creation_date timestamp with time zone NOT NULL,
@@ -50,7 +30,7 @@ CREATE TABLE user_account(
 );
 
 CREATE TABLE address(
-	id bigint NOT NULL DEFAULT nextval('address_id_seq'::regclass),
+	id bigint NOT NULL GENERATED ALWAYS AS IDENTITY (MINVALUE 1 START WITH 1),
   	external_id character varying(32) NOT NULL,
   	active boolean NOT NULL,
   	creation_date timestamp with time zone NOT NULL,
@@ -63,10 +43,10 @@ CREATE TABLE address(
   	id_user bigint,
   	CONSTRAINT address_pkey PRIMARY KEY (id),
   	CONSTRAINT address_id_country_fkey FOREIGN KEY (id_country)
-  		REFERENCES country (id) MATCH SIMPLE
+  		REFERENCES country (id)
       	ON UPDATE CASCADE ON DELETE SET NULL,
   	CONSTRAINT address_id_user_fkey FOREIGN KEY (id_user)
-      	REFERENCES user_account (id) MATCH SIMPLE
+      	REFERENCES user_account (id)
       	ON UPDATE CASCADE ON DELETE CASCADE,
   	CONSTRAINT address_external_id_key UNIQUE (external_id)
 );
