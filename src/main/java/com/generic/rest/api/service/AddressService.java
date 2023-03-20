@@ -34,6 +34,13 @@ public class AddressService extends BaseApiRestService<Address, AddressRepositor
 		return super.save(address);
 	}
 	
+	public Address merge(Address address, Address addressDatabase) {
+		addressDatabase.setState(address.getState());
+		addressDatabase.setStreet(address.getStreet());
+		addressDatabase.setStreetNumber(address.getStreetNumber());
+		return update(addressDatabase);
+	}
+	
 	@Override
 	public Address update(Address address) throws ApiException {
 		setCountry(address);
@@ -49,5 +56,5 @@ public class AddressService extends BaseApiRestService<Address, AddressRepositor
 			address.setCountry(countryService.save(address.getCountry()));
 		}
 	}
-	
+
 }

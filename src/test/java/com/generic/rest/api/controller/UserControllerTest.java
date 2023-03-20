@@ -1,6 +1,5 @@
 package com.generic.rest.api.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -19,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -120,7 +120,7 @@ class SessionControllerTest {
         		  	.address(address)
                     .build();
 
-    	 mvc.perform(post(new StringBuilder(CONTROLLER.USER.PATH).toString())
+    	 mvc.perform(MockMvcRequestBuilders.post(new StringBuilder(CONTROLLER.USER.PATH).toString())
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(user))
 			.headers(authHeader))
@@ -128,8 +128,28 @@ class SessionControllerTest {
      }
      
      @Test
+     void putUser_SuccessResponse() throws Exception {
+    	 String newName = "User_Test_1_edited";
+    	 String newState = "PI";
+    	 
+    	 userCreated.getAddress().setState(newState);
+    	 userCreated.setName(newName);
+    	 
+    	 mvc.perform(MockMvcRequestBuilders.put(new StringBuilder(CONTROLLER.USER.PATH)
+       		  .append(CONTROLLER.PATH_SEPARATOR)
+       		  .append(userCreated.getExternalId())
+       		  .toString())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(userCreated))
+			.headers(authHeader))
+  			.andExpect(status().isOk())
+  			.andExpect(MockMvcResultMatchers.jsonPath("$.name").value(newName))
+    	 	.andExpect(MockMvcResultMatchers.jsonPath("$.address.state").value(newState));
+     }
+     
+     @Test
      void getUserByExternalId_NotFound() throws Exception {
-          this.mvc.perform(get(new StringBuilder(CONTROLLER.USER.PATH)
+          mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
         		  .append(CONTROLLER.PATH_SEPARATOR)
         		  .append("1234")
         		  .toString())
@@ -139,7 +159,7 @@ class SessionControllerTest {
 
      @Test
      void getUserByExternalId_Ok() throws Exception {
-          this.mvc.perform(get(new StringBuilder(CONTROLLER.USER.PATH)
+          mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
         		  .append(CONTROLLER.PATH_SEPARATOR)
         		  .append(userCreated.getExternalId())
         		  .toString())

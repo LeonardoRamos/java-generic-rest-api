@@ -1,5 +1,6 @@
 package com.generic.rest.api.service;
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Map;
 
@@ -71,6 +72,16 @@ public class UserService extends BaseApiRestService<User, UserRepository> {
 	public User update(User user) throws ApiException {
 		User userDatabase = getByExternalId(user.getExternalId());
 		
+		if (user.getId() == null) {
+			user.setId(userDatabase.getId());
+		}
+
+		userDatabase.setUpdateDate(Calendar.getInstance());
+      
+		if (user.getActive() != null && user.getActive()) {
+			user.setDeleteDate(null);
+		}
+		
 		if (user.getPassword() == null || "".equals(user.getPassword())) {
 			user.setPassword(userDatabase.getPassword());
 		
@@ -80,7 +91,7 @@ public class UserService extends BaseApiRestService<User, UserRepository> {
 		
 		setAddress(user);
 		
-		return super.update(user);
+		return userRepository.saveAndFlush(user);
 	}
 	
 	private void setAddress(User user) {
@@ -91,9 +102,8 @@ public class UserService extends BaseApiRestService<User, UserRepository> {
 		
 		try {
 			Address address = addressService.getByExternalId(user.getAddress().getExternalId());
-			
-			user.getAddress().setExternalId(address.getExternalId());
-			user.getAddress().setId(address.getId());
+			address.setUser(user);
+			user.setAddress(addressService.merge(user.getAddress(), address));
 			
 		} catch (NotFoundApiException e) {
 			user.setAddress(addressService.save(user.getAddress()));

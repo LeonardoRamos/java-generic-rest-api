@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +31,7 @@ public abstract class ApiRestController<E extends BaseEntity, S extends ApiRestS
 		return new ResponseEntity<>(getService().findAll(requestFilter), HttpStatus.OK);
     }
     
+    @Transactional
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<E> insert(@RequestBody E entity) throws ApiException {
     	log.info("Processing insert of data: [{}]", entity);
