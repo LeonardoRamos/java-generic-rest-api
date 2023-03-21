@@ -284,6 +284,19 @@ class UserControllerTest {
            .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].name").doesNotExist())
            .andExpect(MockMvcResultMatchers.jsonPath("$.records[10]").doesNotExist());
 	}
+	
+	@Test
+	void getAllUsersFilter_Ok() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
+				.append("?filter=[email=like=test1;address.street=like=Street,address.country.name=Portugal]")
+				.toString())
+		   .headers(authHeader))
+           .andExpect(status().isOk())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].email").value("test1@test.com"))
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].address.country.name").value("PORTUGAL"))
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[1].email").value("test10@test.com"))
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[3]").doesNotExist());
+	}
      
 	@AfterEach
 	void clear() {
