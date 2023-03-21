@@ -67,7 +67,12 @@ public class UserService extends BaseApiRestService<User, UserRepository> {
 		
 		setAddress(user);
 		
-		return super.save(user);
+		User userSaved = super.save(user);
+		userSaved.getAddress().setUser(userSaved);
+		
+		addressService.save(userSaved.getAddress());
+		
+		return userSaved;
 	}
 	
 	@Transactional

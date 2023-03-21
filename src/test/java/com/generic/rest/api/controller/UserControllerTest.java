@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.apache.tomcat.util.json.JSONParser;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ import com.generic.rest.api.service.UserService;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles(profiles = "test")
-class SessionControllerTest {
+class UserControllerTest {
 
 	private static final int TOTAL_USERS = 10;
 	private static final int ADMIN_NUMBER = 1;
@@ -70,83 +71,101 @@ class SessionControllerTest {
     	 
 		for (int i = 1; i <= TOTAL_USERS; i++) {
 			Country country = Country.builder()
-        			 .name(i == ADMIN_NUMBER ? "Portugal" : "Brasil")
-        			 .build();
+					.name(i == ADMIN_NUMBER ? "Portugal" : "Brasil")
+					.build();
         	 
-        	 Address address = Address.builder()
-        			 .street("Street Test " + i)
-        			 .state("RJ")
-        			 .streetNumber("Street " + i)
-        			 .country(country)
-        			 .build();
+			Address address = Address.builder()
+					.street("Street Test " + i)
+					.state("RJ")
+					.streetNumber("Street " + i)
+					.country(country)
+					.build();
         	 
-        	 User user = User.builder()
-            		  	.name("User_Test_" + i)
+			User user = User.builder()
+        		  		.name("User_Test_" + i)
             		  	.password(i + basePassword)
             		  	.email("test" + i + "@test.com")
             		  	.role(i == ADMIN_NUMBER ? Role.ADMIN : Role.USER)
             		  	.address(address)
                         .build();
-        	 
-        	 usersDatabase.add(userService.save(user));
-    	 }
+        	
+			User userCreated = userService.save(user);
+			address.setUser(userCreated);
+			
+			addressService.save(address);
+			
+			usersDatabase.add(userCreated);
+		}
     	 
-    	 Map<String, String> authData = new HashMap<>();
-    	 authData.put(LOGIN.EMAIL_FIELD, usersDatabase.get(0).getEmail());
-    	 authData.put(LOGIN.PASSWORD_FIELD, ADMIN_NUMBER + basePassword);
+		Map<String, String> authData = new HashMap<>();
+		authData.put(LOGIN.EMAIL_FIELD, usersDatabase.get(0).getEmail());
+		authData.put(LOGIN.PASSWORD_FIELD, ADMIN_NUMBER + basePassword);
     	 
-    	 MvcResult result = mvc.perform(post(LOGIN.PATH)
-     			.contentType(MediaType.APPLICATION_JSON)
+		MvcResult result = mvc.perform(post(LOGIN.PATH)
+				.contentType(MediaType.APPLICATION_JSON)
  				.content(objectMapper.writeValueAsString(authData)))
        			.andReturn();
     	 
-    	 JSONParser parser = new JSONParser(result.getResponse().getContentAsString());
-    	 Map<String, Object> authResponse = parser.parseObject();
+		JSONParser parser = new JSONParser(result.getResponse().getContentAsString());
+		Map<String, Object> authResponse = parser.parseObject();
     	 
-    	 StringBuilder token = new StringBuilder(JWTAUTH.BEARER)
-    			 .append(" ")
-    			 .append(authResponse.get(JWTAUTH.TOKEN).toString());
+		StringBuilder token = new StringBuilder(JWTAUTH.BEARER)
+				.append(" ")
+				.append(authResponse.get(JWTAUTH.TOKEN).toString());
     	 
-    	 authHeader.add(JWTAUTH.AUTHORIZATION, token.toString());
-     }
+		authHeader.add(JWTAUTH.AUTHORIZATION, token.toString());
+	}
 
-     @Test
-     void postUser_CreatedResponse() throws Exception {
-    	 Country country = Country.builder()
-    			 .name("Brasil")
-    			 .build();
+	@Test
+	void postUser_CreatedResponse() throws Exception {
+		String newUserName = "User_Test_11";
+		String newUserStreet = "Street Test 11";
+
+		Country country = Country.builder()
+				.name("Brasil")
+				.build();
     	 
-    	 Address address = Address.builder()
-    			 .street("Street Test 11")
-    			 .state("RJ")
-    			 .streetNumber("Street 11")
-    			 .country(country)
-    			 .build();
+		Address address = Address.builder()
+				.street("Street Test 11")
+				.state("RJ")
+				.streetNumber("Street 11")
+				.country(country)
+				.build();
     	 
-    	 User user = User.builder()
-        		  	.name("User_Test_11")
+		User user = User.builder()
+					.name(newUserName)
         		  	.password("11test")
         		  	.email("test11@test.com")
         		  	.role(Role.ADMIN)
         		  	.address(address)
                     .build();
 
-    	 mvc.perform(MockMvcRequestBuilders.post(new StringBuilder(CONTROLLER.USER.PATH).toString())
+		MvcResult result = mvc.perform(MockMvcRequestBuilders.post(new StringBuilder(CONTROLLER.USER.PATH).toString())
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(user))
 			.headers(authHeader))
-  			.andExpect(status().isCreated());
-     }
+			.andExpect(status().isCreated())
+			.andReturn();
+		
+		User userResponse = objectMapper.readValue(result.getResponse().getContentAsString(), User.class);
+		User userPost = userService.getByExternalId(userResponse.getExternalId());
+		
+		Assertions.assertEquals(newUserName, userPost.getName());
+		Assertions.assertEquals(newUserStreet, userPost.getAddress().getStreet());
+		
+		addressService.delete(userPost.getAddress().getExternalId());
+		userService.delete(userPost.getExternalId());
+	}
      
-     @Test
-     void putUser_SuccessResponse() throws Exception {
-    	 String newName = "User_Test_1_edited";
-    	 String newState = "Lisboa";
+	@Test
+	void putUser_SuccessResponse() throws Exception {
+		String newName = "User_Test_1_edited";
+		String newState = "Lisboa";
     	 
-    	 usersDatabase.get(0).getAddress().setState(newState);
-    	 usersDatabase.get(0).setName(newName);
+		usersDatabase.get(0).getAddress().setState(newState);
+		usersDatabase.get(0).setName(newName);
     	 
-    	 mvc.perform(MockMvcRequestBuilders.put(new StringBuilder(CONTROLLER.USER.PATH)
+		MvcResult result = mvc.perform(MockMvcRequestBuilders.put(new StringBuilder(CONTROLLER.USER.PATH)
        		  .append(CONTROLLER.PATH_SEPARATOR)
        		  .append(usersDatabase.get(0).getExternalId())
        		  .toString())
@@ -155,121 +174,128 @@ class SessionControllerTest {
 			.headers(authHeader))
   			.andExpect(status().isOk())
   			.andExpect(MockMvcResultMatchers.jsonPath("$.name").value(newName))
-    	 	.andExpect(MockMvcResultMatchers.jsonPath("$.address.state").value(newState));
-     }
+    	 	.andExpect(MockMvcResultMatchers.jsonPath("$.address.state").value(newState))
+    	 	.andReturn();
+		
+		User userResponse = objectMapper.readValue(result.getResponse().getContentAsString(), User.class);
+		User userPut = userService.getByExternalId(userResponse.getExternalId());
+		
+		Assertions.assertEquals(newName, userPut.getName());
+		Assertions.assertEquals(newState, userPut.getAddress().getState());
+	}
      
-     @Test
-     void getUserByExternalId_NotFound() throws Exception {
-          mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
-        		  .append(CONTROLLER.PATH_SEPARATOR)
-        		  .append("1234")
-        		  .toString())
-    		   .headers(authHeader))
-               .andExpect(status().isNotFound());
-     }
+	@Test
+	void getUserByExternalId_NotFound() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
+				.append(CONTROLLER.PATH_SEPARATOR)
+				.append("1234")
+				.toString())
+			.headers(authHeader))
+           .andExpect(status().isNotFound());
+	}
 
-     @Test
-     void getUserByExternalId_Ok() throws Exception {
-          mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
-        		  .append(CONTROLLER.PATH_SEPARATOR)
-        		  .append(usersDatabase.get(0).getExternalId())
-        		  .toString())
-    		   .headers(authHeader))
-               .andExpect(status().isOk())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(usersDatabase.get(0).getName()));
-     }
+	@Test
+	void getUserByExternalId_Ok() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
+				.append(CONTROLLER.PATH_SEPARATOR)
+				.append(usersDatabase.get(0).getExternalId())
+				.toString())
+		   .headers(authHeader))
+           .andExpect(status().isOk())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(usersDatabase.get(0).getName()));
+	}
      
-     @Test
-     void deleteUserByExternalId_NotFound() throws Exception {
-          mvc.perform(MockMvcRequestBuilders.delete(new StringBuilder(CONTROLLER.USER.PATH)
-        		  .append(CONTROLLER.PATH_SEPARATOR)
-        		  .append("1234")
-        		  .toString())
-    		   .headers(authHeader))
-               .andExpect(status().isNotFound());
-     }
+	@Test
+	void deleteUserByExternalId_NotFound() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.delete(new StringBuilder(CONTROLLER.USER.PATH)
+				.append(CONTROLLER.PATH_SEPARATOR)
+				.append("1234")
+				.toString())
+		   .headers(authHeader))
+           .andExpect(status().isNotFound());
+	}
 
-     @Test
-     void deleteUserByExternalId_Ok() throws Exception {
-          mvc.perform(MockMvcRequestBuilders.delete(new StringBuilder(CONTROLLER.USER.PATH)
-        		  .append(CONTROLLER.PATH_SEPARATOR)
-        		  .append(usersDatabase.get(9).getExternalId())
-        		  .toString())
-    		   .headers(authHeader))
-               .andExpect(status().isOk());
+	@Test
+	void deleteUserByExternalId_Ok() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.delete(new StringBuilder(CONTROLLER.USER.PATH)
+				.append(CONTROLLER.PATH_SEPARATOR)
+				.append(usersDatabase.get(9).getExternalId())
+				.toString())
+		   .headers(authHeader))
+           .andExpect(status().isOk());
           
-          usersDatabase.remove(9);
-     }
+		usersDatabase.remove(9);
+	}
      
-     @Test
-     void getAllUsers_Ok() throws Exception {
-          mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH).toString())
-    		   .headers(authHeader))
-               .andExpect(status().isOk())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.records[0]").exists())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.records[9]").exists())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.records[10]").doesNotExist());
-     }
+	@Test
+	void getAllUsers_Ok() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH).toString())
+				.headers(authHeader))
+           	.andExpect(status().isOk())
+           	.andExpect(MockMvcResultMatchers.jsonPath("$.records[0]").exists())
+           	.andExpect(MockMvcResultMatchers.jsonPath("$.records[9]").exists())
+           	.andExpect(MockMvcResultMatchers.jsonPath("$.records[10]").doesNotExist());
+	}
      
-     @Test
-     void getAllUsersSingleProjection_Ok() throws Exception {
-          mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
-        		  .append("?projection=[email]")
-        		  .toString())
-    		   .headers(authHeader))
-               .andExpect(status().isOk())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].email").exists())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].name").doesNotExist())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].email").exists())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].name").doesNotExist())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.records[10]").doesNotExist());
-     }
+	@Test
+	void getAllUsersSingleProjection_Ok() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
+				.append("?projection=[email]")
+				.toString())
+		   .headers(authHeader))
+           .andExpect(status().isOk())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].email").exists())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].name").doesNotExist())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].email").exists())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].name").doesNotExist())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[10]").doesNotExist());
+	}
      
-     @Test
-     void getAllUsersNestedSingleProjection_Ok() throws Exception {
-          mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
-        		  .append("?projection=[address.country.name]")
-        		  .toString())
-    		   .headers(authHeader))
-               .andExpect(status().isOk())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].address.country.name").exists())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].name").doesNotExist())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].address.country.name").exists())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].name").doesNotExist())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.records[10]").doesNotExist());
-     }
+	@Test
+	void getAllUsersNestedSingleProjection_Ok() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
+				.append("?projection=[address.country.name]")
+				.toString())
+		   .headers(authHeader))
+           .andExpect(status().isOk())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].address.country.name").exists())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].name").doesNotExist())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].address.country.name").exists())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].name").doesNotExist())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[10]").doesNotExist());
+	}
      
-     @Test
-     void getAllUsersNestedProjections_Ok() throws Exception {
-          mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
-        		  .append("?projection=[address.country.name,address.street,address.streetNumber]")
-        		  .toString())
-    		   .headers(authHeader))
-               .andExpect(status().isOk())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].address.country.name").exists())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].address.street").exists())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].address.streetNumber").exists())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].address.state").exists())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].name").doesNotExist())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].address.country.name").exists())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].address.street").exists())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].address.streetNumber").exists())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].address.state").exists())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].name").doesNotExist())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.records[10]").doesNotExist());
-     }
+	@Test
+	void getAllUsersNestedProjections_Ok() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
+				.append("?projection=[address.country.name,address.street,address.streetNumber]")
+				.toString())
+		   .headers(authHeader))
+           .andExpect(status().isOk())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].address.country.name").exists())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].address.street").exists())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].address.streetNumber").exists())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].address.state").doesNotExist())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].name").doesNotExist())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].address.country.name").exists())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].address.street").exists())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].address.streetNumber").exists())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].address.state").doesNotExist())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].name").doesNotExist())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[10]").doesNotExist());
+	}
      
-     @AfterEach
-     void clear() {
-    	 for (int i = 0; i < usersDatabase.size(); i++) {
+	@AfterEach
+	void clear() {
+		for (int i = 0; i < usersDatabase.size(); i++) {
     		 
-    		 try {
-    			 countryService.delete(usersDatabase.get(i).getAddress().getCountry().getExternalId());
-    		 } catch (NotFoundApiException e) {}
+			try {
+				countryService.delete(usersDatabase.get(i).getAddress().getCountry().getExternalId());
+			} catch (NotFoundApiException e) {}
     		 
-    		 addressService.delete(usersDatabase.get(i).getAddress().getExternalId());
-    		 userService.delete(usersDatabase.get(i).getExternalId());
-    	 }
-     }
+			addressService.delete(usersDatabase.get(i).getAddress().getExternalId());
+			userService.delete(usersDatabase.get(i).getExternalId());
+		}
+	}
 
 }
