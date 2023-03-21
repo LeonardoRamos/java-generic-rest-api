@@ -201,6 +201,16 @@ class SessionControllerTest {
           usersDatabase.remove(9);
      }
      
+     @Test
+     void getAllUsers_Ok() throws Exception {
+          mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH).toString())
+    		   .headers(authHeader))
+               .andExpect(status().isOk())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.records[0]").exists())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.records[9]").exists())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.records[10]").doesNotExist());
+     }
+     
      @AfterEach
      void clear() {
     	 for (int i = 0; i < usersDatabase.size(); i++) {
