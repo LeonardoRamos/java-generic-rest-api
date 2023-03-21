@@ -211,6 +211,54 @@ class SessionControllerTest {
                .andExpect(MockMvcResultMatchers.jsonPath("$.records[10]").doesNotExist());
      }
      
+     @Test
+     void getAllUsersSingleProjection_Ok() throws Exception {
+          mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
+        		  .append("?projection=[email]")
+        		  .toString())
+    		   .headers(authHeader))
+               .andExpect(status().isOk())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].email").exists())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].name").doesNotExist())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].email").exists())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].name").doesNotExist())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.records[10]").doesNotExist());
+     }
+     
+     @Test
+     void getAllUsersNestedSingleProjection_Ok() throws Exception {
+          mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
+        		  .append("?projection=[address.country.name]")
+        		  .toString())
+    		   .headers(authHeader))
+               .andExpect(status().isOk())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].address.country.name").exists())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].name").doesNotExist())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].address.country.name").exists())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].name").doesNotExist())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.records[10]").doesNotExist());
+     }
+     
+     @Test
+     void getAllUsersNestedProjections_Ok() throws Exception {
+          mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
+        		  .append("?projection=[address.country.name,address.street,address.streetNumber]")
+        		  .toString())
+    		   .headers(authHeader))
+               .andExpect(status().isOk())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].address.country.name").exists())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].address.street").exists())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].address.streetNumber").exists())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].address.state").exists())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].name").doesNotExist())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].address.country.name").exists())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].address.street").exists())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].address.streetNumber").exists())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].address.state").exists())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.records[9].name").doesNotExist())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.records[10]").doesNotExist());
+     }
+     
      @AfterEach
      void clear() {
     	 for (int i = 0; i < usersDatabase.size(); i++) {
