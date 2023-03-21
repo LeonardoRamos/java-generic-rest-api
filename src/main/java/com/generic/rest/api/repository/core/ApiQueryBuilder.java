@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import com.generic.rest.api.Constants;
 import com.generic.rest.api.Constants.MSGERROR;
+import com.generic.rest.api.domain.core.filter.AggregateFunction;
 import com.generic.rest.api.domain.core.filter.FilterExpression;
 import com.generic.rest.api.domain.core.filter.FilterField;
 import com.generic.rest.api.domain.core.filter.FilterOrder;
@@ -95,23 +96,23 @@ public class ApiQueryBuilder<E> {
 			List<Selection<? extends Object>> aggregationFields = new ArrayList<>();
 			
 			if (!sumFields.isEmpty()) {
-				addAggregationFields(root, criteriaBuilder, entityClass, sumFields, aggregationFields);
+				addAggregationFields(root, criteriaBuilder, entityClass, sumFields, aggregationFields, AggregateFunction.SUM);
 			}
 			
 			if (!countFields.isEmpty()) {
-				addAggregationFields(root, criteriaBuilder, entityClass, countFields, aggregationFields);
+				addAggregationFields(root, criteriaBuilder, entityClass, countFields, aggregationFields, AggregateFunction.COUNT);
 			}
 			
 			if (!countDistinctFields.isEmpty()) {
-				addAggregationFields(root, criteriaBuilder, entityClass, countDistinctFields, aggregationFields);
+				addAggregationFields(root, criteriaBuilder, entityClass, countDistinctFields, aggregationFields, AggregateFunction.COUNT_DISTINCT);
 			}
 			
 			if (!avgFields.isEmpty()) {
-				addAggregationFields(root, criteriaBuilder, entityClass, avgFields, aggregationFields);
+				addAggregationFields(root, criteriaBuilder, entityClass, avgFields, aggregationFields, AggregateFunction.AVG);
 			}
 			
 			if (!groupByFields.isEmpty()) {
-				addAggregationFields(root, criteriaBuilder, entityClass, groupByFields, aggregationFields);
+				addAggregationFields(root, criteriaBuilder, entityClass, groupByFields, aggregationFields, null);
 			}
 			
 			return aggregationFields;
@@ -122,11 +123,26 @@ public class ApiQueryBuilder<E> {
 	}
 
 	private void addAggregationFields(Root<?> root, CriteriaBuilder criteriaBuilder, Class<E> entityClass,
-			List<String> sumFields, List<Selection<? extends Object>> aggregationFields) throws NoSuchFieldException {
+			List<String> requestFields, List<Selection<? extends Object>> aggregationFields, AggregateFunction aggregateFunction) throws NoSuchFieldException {
 		
-		for (String fieldName : sumFields) {
+		for (String fieldName : requestFields) {
 			List<Field> fields = splitFields(entityClass, fieldName);
-			aggregationFields.add(criteriaBuilder.sum(buildFieldExpression(fields, root)));
+			
+			if (Boolean.TRUE.equals(AggregateFunction.isSumFunction(aggregateFunction.name()))) {
+				aggregationFields.add(criteriaBuilder.sum(buildFieldExpression(fields, root)));
+				
+			} else if (Boolean.TRUE.equals(AggregateFunction.isAvgFunction(aggregateFunction.name()))) {
+				aggregationFields.add(criteriaBuilder.avg(buildFieldExpression(fields, root)));
+				
+			} else if (Boolean.TRUE.equals(AggregateFunction.isCountFunction(aggregateFunction.name()))) {
+				aggregationFields.add(criteriaBuilder.count(buildFieldExpression(fields, root)));
+				
+			} else if (Boolean.TRUE.equals(AggregateFunction.isCountDistinctFunction(aggregateFunction.name()))) {
+				aggregationFields.add(criteriaBuilder.countDistinct(buildFieldExpression(fields, root)));
+				
+			} else {
+				aggregationFields.add(buildFieldExpression(fields, root));
+			}
 		}
 	}
 

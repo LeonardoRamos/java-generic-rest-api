@@ -29,23 +29,23 @@ public enum AggregateFunction {
 	}
 	
 	public static Boolean isSumFunction(String aggregateFunction) {
-		return SUM.equals(AggregateFunction.valueOf(aggregateFunction)) || SUM.name().equals(aggregateFunction) || 
-				SUM.getFunction().equals(aggregateFunction);
+		return aggregateFunction != null && (SUM.name().equals(aggregateFunction) || SUM.getFunction().equals(aggregateFunction) ||
+				SUM.equals(AggregateFunction.valueOf(aggregateFunction.toUpperCase())));
 	}
 	
 	public static Boolean isAvgFunction(String aggregateFunction) {
-		return AVG.equals(AggregateFunction.valueOf(aggregateFunction)) || AVG.name().equals(aggregateFunction) || 
-				AVG.getFunction().equals(aggregateFunction);
+		return aggregateFunction != null && (AVG.name().equals(aggregateFunction) || AVG.getFunction().equals(aggregateFunction) ||
+				AVG.equals(AggregateFunction.valueOf(aggregateFunction.toUpperCase())));
 	}
 	
 	public static Boolean isCountFunction(String aggregateFunction) {
-		return COUNT.equals(AggregateFunction.valueOf(aggregateFunction)) || COUNT.name().equals(aggregateFunction) || 
-				COUNT.getFunction().equals(aggregateFunction);
+		return aggregateFunction != null && (COUNT.name().equals(aggregateFunction) || COUNT.getFunction().equals(aggregateFunction) ||
+				COUNT.equals(AggregateFunction.valueOf(aggregateFunction.toUpperCase())));
 	}
 	
 	public static Boolean isCountDistinctFunction(String aggregateFunction) {
-		return COUNT_DISTINCT.equals(AggregateFunction.valueOf(aggregateFunction)) || COUNT_DISTINCT.name().equals(aggregateFunction) || 
-				COUNT_DISTINCT.getFunction().equals(aggregateFunction);
+		return aggregateFunction != null && (COUNT_DISTINCT.name().equals(aggregateFunction) || COUNT_DISTINCT.getFunction().equals(aggregateFunction) ||
+				COUNT_DISTINCT.equals(AggregateFunction.valueOf(aggregateFunction.toUpperCase())));
 	}
 	
 }

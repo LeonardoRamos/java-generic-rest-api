@@ -65,7 +65,7 @@ public class ApiResultMapper<E extends BaseEntity> {
 		
 		for (int i = 0; i < fieldData.length; i++) {
 		
-			if (projection != null &&projection.get(i) instanceof AggregationFunction) {
+			if (projection != null && projection.get(i) instanceof AggregationFunction) {
 				AggregationFunction aggregationFunction = (AggregationFunction) projection.get(i);
 				Path<Object> attributePath = (Path<Object>) aggregationFunction.getArgumentExpressions().get(0);
 				

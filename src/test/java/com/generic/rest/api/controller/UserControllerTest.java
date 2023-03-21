@@ -297,6 +297,29 @@ class UserControllerTest {
            .andExpect(MockMvcResultMatchers.jsonPath("$.records[1].email").value("test10@test.com"))
            .andExpect(MockMvcResultMatchers.jsonPath("$.records[3]").doesNotExist());
 	}
+	
+	@Test
+	void getAllUsersAggregationMultipleCountDistinct_Ok() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
+				.append("?countDistinct=[address.country.name,address.state]")
+				.toString())
+		   .headers(authHeader))
+           .andExpect(status().isOk())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].count.address.country.name").value(2))
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].count.address.state").value(1));
+	}
+	
+	@Test
+	void getAllUsersAggregationMultipleCount_Ok() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
+				.append("?count=[address.street,address.streetNumber]&countDistinct=[id]")
+				.toString())
+		   .headers(authHeader))
+           .andExpect(status().isOk())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].count.id").value(10))
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].count.address.streetNumber").value(10))
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].count.address.street").value(10));
+	}
      
 	@AfterEach
 	void clear() {
