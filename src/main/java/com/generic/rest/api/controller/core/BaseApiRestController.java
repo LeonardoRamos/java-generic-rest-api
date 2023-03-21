@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,7 +28,6 @@ public abstract class BaseApiRestController<E extends BaseApiEntity, S extends B
 		return (ResponseEntity<E>) new ResponseEntity<>(getService().getByExternalId(externalId), HttpStatus.OK);
     }
 	
-	@Transactional
     @PutMapping(value = CONTROLLER.EXTERNAL_ID_PATH, 
 			consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<E> update(@PathVariable(CONTROLLER.EXTERNAL_ID) String externalId, 
@@ -38,7 +36,6 @@ public abstract class BaseApiRestController<E extends BaseApiEntity, S extends B
 		return (ResponseEntity<E>) new ResponseEntity<>(getService().update(entity), HttpStatus.OK);
     }
     
-    @Transactional
     @DeleteMapping(value = CONTROLLER.EXTERNAL_ID_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> delete(@PathVariable(CONTROLLER.EXTERNAL_ID) String externalId) throws ApiException {
     	log.info("Processing delete of entity of externalId: [{}]", externalId);

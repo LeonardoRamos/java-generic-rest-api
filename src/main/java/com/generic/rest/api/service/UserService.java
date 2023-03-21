@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.generic.rest.api.Constants;
 import com.generic.rest.api.Constants.CONTROLLER.LOGIN;
@@ -59,6 +60,7 @@ public class UserService extends BaseApiRestService<User, UserRepository> {
 		return Collections.singletonMap(JWTAUTH.TOKEN, tokenAuthenticationService.generateToken(userAccount));
 	}
 	
+	@Transactional
 	@Override
 	public User save(User user) throws ApiException {
 		user.setPassword(EncrypterUtils.encryptPassword(user.getPassword()));
@@ -68,6 +70,7 @@ public class UserService extends BaseApiRestService<User, UserRepository> {
 		return super.save(user);
 	}
 	
+	@Transactional
 	@Override
 	public User update(User user) throws ApiException {
 		User userDatabase = getByExternalId(user.getExternalId());
