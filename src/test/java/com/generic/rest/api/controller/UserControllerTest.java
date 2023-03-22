@@ -26,18 +26,18 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.generic.rest.api.BaseConstants.CONTROLLER;
 import com.generic.rest.api.ApiConstants;
 import com.generic.rest.api.ApiConstants.CONTROLLER.LOGIN;
-import com.generic.rest.api.BaseConstants.JWTAUTH;
 import com.generic.rest.api.domain.Address;
 import com.generic.rest.api.domain.Country;
 import com.generic.rest.api.domain.Role;
 import com.generic.rest.api.domain.User;
-import com.generic.rest.api.exception.NotFoundApiException;
 import com.generic.rest.api.service.AddressService;
 import com.generic.rest.api.service.CountryService;
 import com.generic.rest.api.service.UserService;
+import com.generic.rest.core.BaseConstants.CONTROLLER;
+import com.generic.rest.core.BaseConstants.JWTAUTH;
+import com.generic.rest.core.exception.NotFoundApiException;
 
 @SpringBootTest
 @AutoConfigureMockMvc

@@ -11,7 +11,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.generic.rest.api.domain.core.BaseApiEntity;
+import com.generic.rest.core.domain.BaseApiEntity;
 
 @Entity
 @Table(name = "address")

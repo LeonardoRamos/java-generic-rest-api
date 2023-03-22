@@ -1,5 +1,7 @@
 package com.generic.rest.api;
 
+import com.generic.rest.core.BaseConstants;
+
 public final class ApiConstants {
 	
 	private ApiConstants() {

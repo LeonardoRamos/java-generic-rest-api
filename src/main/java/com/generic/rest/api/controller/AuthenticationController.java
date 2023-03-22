@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.generic.rest.api.ApiConstants.CONTROLLER;
 import com.generic.rest.api.ApiConstants.CONTROLLER.LOGIN;
-import com.generic.rest.api.config.security.NoSecurity;
-import com.generic.rest.api.exception.NotFoundApiException;
 import com.generic.rest.api.service.UserService;
+import com.generic.rest.core.config.security.NoSecurity;
+import com.generic.rest.core.exception.NotFoundApiException;
 
 @RestController
 @RequestMapping(CONTROLLER.LOGIN.PATH)

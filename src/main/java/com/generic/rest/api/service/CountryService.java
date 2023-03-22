@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.generic.rest.api.domain.Country;
-import com.generic.rest.api.exception.ApiException;
 import com.generic.rest.api.repository.CountryRepository;
-import com.generic.rest.api.service.core.BaseApiRestService;
+import com.generic.rest.core.exception.ApiException;
+import com.generic.rest.core.service.BaseApiRestService;
 
 @Service
 public class CountryService extends BaseApiRestService<Country, CountryRepository> {

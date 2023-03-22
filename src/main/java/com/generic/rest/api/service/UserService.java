@@ -11,20 +11,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.generic.rest.api.ApiConstants.CONTROLLER.LOGIN;
-import com.generic.rest.api.BaseConstants;
-import com.generic.rest.api.BaseConstants.JWTAUTH;
 import com.generic.rest.api.ApiConstants.MSGERROR;
 import com.generic.rest.api.domain.Address;
 import com.generic.rest.api.domain.Role;
 import com.generic.rest.api.domain.User;
-import com.generic.rest.api.exception.ApiException;
-import com.generic.rest.api.exception.NotFoundApiException;
 import com.generic.rest.api.repository.UserRepository;
-import com.generic.rest.api.service.core.AuthenticationService;
-import com.generic.rest.api.service.core.BaseApiRestService;
-import com.generic.rest.api.service.core.TokenService;
-import com.generic.rest.api.util.EncrypterUtils;
-import com.generic.rest.api.util.TokenUtils;
+import com.generic.rest.core.BaseConstants;
+import com.generic.rest.core.BaseConstants.JWTAUTH;
+import com.generic.rest.core.exception.ApiException;
+import com.generic.rest.core.exception.NotFoundApiException;
+import com.generic.rest.core.service.AuthenticationService;
+import com.generic.rest.core.service.BaseApiRestService;
+import com.generic.rest.core.service.TokenService;
+import com.generic.rest.core.util.EncrypterUtils;
+import com.generic.rest.core.util.TokenUtils;
 
 @Service
 public class UserService extends BaseApiRestService<User, UserRepository> implements AuthenticationService {
@@ -36,7 +36,7 @@ public class UserService extends BaseApiRestService<User, UserRepository> implem
 	private AddressService addressService;
 	
 	@Autowired
-	private TokenService tokenAuthenticationService;
+	private TokenService tokenService;
 	
 	@Override
 	protected UserRepository getRepository() {
@@ -60,7 +60,7 @@ public class UserService extends BaseApiRestService<User, UserRepository> implem
 			throw new AuthenticationCredentialsNotFoundException(MSGERROR.AUTHENTICATION_ERROR);
 		}
 		
-		return Collections.singletonMap(JWTAUTH.TOKEN, tokenAuthenticationService.generateToken(userAccount));
+		return Collections.singletonMap(JWTAUTH.TOKEN, tokenService.generateToken(userAccount));
 	}
 	
 	@Transactional
@@ -127,14 +127,14 @@ public class UserService extends BaseApiRestService<User, UserRepository> implem
 	
    	public Boolean allowUserAccess(String authorization, String userAccountExternalId) {
    		String token = TokenUtils.getTokenFromAuthorizationHeader(authorization);
-   		String userAccountExternalIdClaim = tokenAuthenticationService.getTokenClaim(token, BaseConstants.JWTAUTH.CLAIM_EXTERNAL_ID);
+   		String userAccountExternalIdClaim = tokenService.getTokenClaim(token, BaseConstants.JWTAUTH.CLAIM_EXTERNAL_ID);
 		
    		return userAccountExternalId.equals(userAccountExternalIdClaim) || allowAdminAccess(authorization);
    	}
 	
    	public Boolean allowAdminAccess(String authorization) {
    		String token = TokenUtils.getTokenFromAuthorizationHeader(authorization);
-   		String roleClaim = tokenAuthenticationService.getTokenClaim(token, BaseConstants.JWTAUTH.CLAIM_CREDENTIAL_ROLE);
+   		String roleClaim = tokenService.getTokenClaim(token, BaseConstants.JWTAUTH.CLAIM_CREDENTIAL_ROLE);
 		
    		return Role.ADMIN.name().equals(roleClaim);
    	}

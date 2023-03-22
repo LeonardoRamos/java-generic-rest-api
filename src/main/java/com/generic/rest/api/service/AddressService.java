@@ -5,9 +5,9 @@ import org.springframework.stereotype.Service;
 
 import com.generic.rest.api.domain.Address;
 import com.generic.rest.api.domain.Country;
-import com.generic.rest.api.exception.ApiException;
 import com.generic.rest.api.repository.AddressRepository;
-import com.generic.rest.api.service.core.BaseApiRestService;
+import com.generic.rest.core.exception.ApiException;
+import com.generic.rest.core.service.BaseApiRestService;
 
 @Service
 public class AddressService extends BaseApiRestService<Address, AddressRepository> {

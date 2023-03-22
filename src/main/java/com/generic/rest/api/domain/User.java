@@ -10,8 +10,8 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
-import com.generic.rest.api.domain.core.AuthEntity;
-import com.generic.rest.api.domain.core.BaseApiEntity;
+import com.generic.rest.core.domain.AuthEntity;
+import com.generic.rest.core.domain.BaseApiEntity;
 
 @Entity
 @Table(name = "user_account")
