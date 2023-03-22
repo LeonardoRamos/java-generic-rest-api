@@ -4,7 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import com.generic.rest.api.domain.core.BaseApiEntity;
+import com.generic.rest.core.domain.BaseApiEntity;
 
 @Entity
 @Table(name = "country")

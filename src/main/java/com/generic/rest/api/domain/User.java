@@ -10,11 +10,12 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
-import com.generic.rest.api.domain.core.BaseApiEntity;
+import com.generic.rest.core.domain.AuthEntity;
+import com.generic.rest.core.domain.BaseApiEntity;
 
 @Entity
 @Table(name = "user_account")
-public class User extends BaseApiEntity {
+public class User extends BaseApiEntity implements AuthEntity {
 	
 	@Column(name = "name", length = 80)
 	private String name;
@@ -25,10 +26,13 @@ public class User extends BaseApiEntity {
 	@Column(name = "password", columnDefinition = "text")
 	private String password;
 	
+	@Column(name = "age")
+	private Integer age;
+	
 	@Column(name = "role")
 	@Enumerated(EnumType.STRING)
 	private Role role;
-	
+
 	@OneToOne(mappedBy = "user")
 	@Cascade(CascadeType.SAVE_UPDATE)
 	private Address address;
@@ -39,6 +43,7 @@ public class User extends BaseApiEntity {
 		this.name = builder.name;
 		this.email = builder.email;
 		this.password = builder.password;
+		this.age = builder.age;
 		this.role = builder.role;
 		this.address = builder.address;
 		this.setId(builder.getId());
@@ -76,6 +81,14 @@ public class User extends BaseApiEntity {
 		this.password = password;
 	}
 
+	public Integer getAge() {
+		return age;
+	}
+
+	public void setAge(Integer age) {
+		this.age = age;
+	}
+
 	public Role getRole() {
 		return role;
 	}
@@ -91,7 +104,22 @@ public class User extends BaseApiEntity {
 	public void setAddress(Address address) {
 		this.address = address;
 	}
+	
+	@Override
+	public String getPrincipalCredential() {
+		return getEmail();
+	}
 
+	@Override
+	public String getCredentialRole() {
+		return getRole().name();
+	}
+
+	@Override
+	public String getAdditionalInfo() {
+		return getName();
+	}
+	
 	public static UserBuilder builder() {
 		return new UserBuilder();
 	}
@@ -101,6 +129,7 @@ public class User extends BaseApiEntity {
 		private String name;
 		private String email;
 		private String password;
+		private Integer age;
 		private Address address;
 		private Role role;
 		
@@ -121,6 +150,11 @@ public class User extends BaseApiEntity {
 		
 		public UserBuilder password(String password) {
 			this.password = password;
+			return this;
+		}
+		
+		public UserBuilder age(Integer age) {
+			this.age = age;
 			return this;
 		}
 		
