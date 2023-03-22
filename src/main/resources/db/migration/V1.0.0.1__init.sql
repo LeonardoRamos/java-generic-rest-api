@@ -22,6 +22,7 @@ CREATE TABLE user_account(
   	delete_date timestamp with time zone,
   	name character varying(255),
   	email character varying(255) NOT NULL,
+  	age integer NOT NULL,
   	password character varying(255) NOT NULL,
   	role enum_user_account_role NOT NULL,
   	CONSTRAINT user_account_pkey PRIMARY KEY (id),

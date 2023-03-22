@@ -25,6 +25,9 @@ public class User extends BaseApiEntity {
 	@Column(name = "password", columnDefinition = "text")
 	private String password;
 	
+	@Column(name = "age")
+	private Integer age;
+	
 	@Column(name = "role")
 	@Enumerated(EnumType.STRING)
 	private Role role;
@@ -39,6 +42,7 @@ public class User extends BaseApiEntity {
 		this.name = builder.name;
 		this.email = builder.email;
 		this.password = builder.password;
+		this.age = builder.age;
 		this.role = builder.role;
 		this.address = builder.address;
 		this.setId(builder.getId());
@@ -76,6 +80,14 @@ public class User extends BaseApiEntity {
 		this.password = password;
 	}
 
+	public Integer getAge() {
+		return age;
+	}
+
+	public void setAge(Integer age) {
+		this.age = age;
+	}
+
 	public Role getRole() {
 		return role;
 	}
@@ -101,6 +113,7 @@ public class User extends BaseApiEntity {
 		private String name;
 		private String email;
 		private String password;
+		private Integer age;
 		private Address address;
 		private Role role;
 		
@@ -121,6 +134,11 @@ public class User extends BaseApiEntity {
 		
 		public UserBuilder password(String password) {
 			this.password = password;
+			return this;
+		}
+		
+		public UserBuilder age(Integer age) {
+			this.age = age;
 			return this;
 		}
 		

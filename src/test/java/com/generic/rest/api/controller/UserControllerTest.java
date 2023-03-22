@@ -85,6 +85,7 @@ class UserControllerTest {
         		  		.name("User_Test_" + i)
             		  	.password(i + basePassword)
             		  	.email("test" + i + "@test.com")
+            		  	.age(i + 20)
             		  	.role(i == ADMIN_NUMBER ? Role.ADMIN : Role.USER)
             		  	.address(address)
                         .build();
@@ -136,6 +137,7 @@ class UserControllerTest {
 					.name(newUserName)
         		  	.password("11test")
         		  	.email("test11@test.com")
+        		  	.age(25)
         		  	.role(Role.ADMIN)
         		  	.address(address)
                     .build();
@@ -319,6 +321,45 @@ class UserControllerTest {
            .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].count.id").value(10))
            .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].count.address.streetNumber").value(10))
            .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].count.address.street").value(10));
+	}
+	
+	@Test
+	void getAllUsersGroupByCount_Ok() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
+				.append("?count=[name]&groupBy=[address.country.name]")
+				.toString())
+		   .headers(authHeader))
+           .andExpect(status().isOk())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].count.name").value(9))
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].address.country.name").value("BRASIL"))
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[1].count.name").value(1))
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[1].address.country.name").value("PORTUGAL"));
+	}
+	
+	@Test
+	void getAllUsersSumGroupBy_Ok() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
+				.append("?sum=[age]&groupBy=[address.country.name]")
+				.toString())
+		   .headers(authHeader))
+           .andExpect(status().isOk())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].sum.age").value(234))
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].address.country.name").value("BRASIL"))
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[1].sum.age").value(21))
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[1].address.country.name").value("PORTUGAL"));
+	}
+	
+	@Test
+	void getAllUsersAvgGroupBy_Ok() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
+				.append("?avg=[age]&groupBy=[address.country.name]")
+				.toString())
+		   .headers(authHeader))
+           .andExpect(status().isOk())
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].avg.age").value(26.0))
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[0].address.country.name").value("BRASIL"))
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[1].avg.age").value(21.0))
+           .andExpect(MockMvcResultMatchers.jsonPath("$.records[1].address.country.name").value("PORTUGAL"));
 	}
      
 	@AfterEach

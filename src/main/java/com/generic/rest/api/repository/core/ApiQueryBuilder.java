@@ -96,19 +96,19 @@ public class ApiQueryBuilder<E> {
 			List<Selection<? extends Object>> aggregationFields = new ArrayList<>();
 			
 			if (!sumFields.isEmpty()) {
-				addAggregationFields(root, criteriaBuilder, entityClass, sumFields, aggregationFields, AggregateFunction.SUM);
+				addAggregationFields(root, criteriaBuilder, entityClass, sumFields, aggregationFields, AggregateFunction.SUM.name());
 			}
 			
 			if (!countFields.isEmpty()) {
-				addAggregationFields(root, criteriaBuilder, entityClass, countFields, aggregationFields, AggregateFunction.COUNT);
+				addAggregationFields(root, criteriaBuilder, entityClass, countFields, aggregationFields, AggregateFunction.COUNT.name());
 			}
 			
 			if (!countDistinctFields.isEmpty()) {
-				addAggregationFields(root, criteriaBuilder, entityClass, countDistinctFields, aggregationFields, AggregateFunction.COUNT_DISTINCT);
+				addAggregationFields(root, criteriaBuilder, entityClass, countDistinctFields, aggregationFields, AggregateFunction.COUNT_DISTINCT.name());
 			}
 			
 			if (!avgFields.isEmpty()) {
-				addAggregationFields(root, criteriaBuilder, entityClass, avgFields, aggregationFields, AggregateFunction.AVG);
+				addAggregationFields(root, criteriaBuilder, entityClass, avgFields, aggregationFields, AggregateFunction.AVG.name());
 			}
 			
 			if (!groupByFields.isEmpty()) {
@@ -123,21 +123,21 @@ public class ApiQueryBuilder<E> {
 	}
 
 	private void addAggregationFields(Root<?> root, CriteriaBuilder criteriaBuilder, Class<E> entityClass,
-			List<String> requestFields, List<Selection<? extends Object>> aggregationFields, AggregateFunction aggregateFunction) throws NoSuchFieldException {
+			List<String> requestFields, List<Selection<? extends Object>> aggregationFields, String aggregateFunction) throws NoSuchFieldException {
 		
 		for (String fieldName : requestFields) {
 			List<Field> fields = splitFields(entityClass, fieldName);
 			
-			if (Boolean.TRUE.equals(AggregateFunction.isSumFunction(aggregateFunction.name()))) {
+			if (Boolean.TRUE.equals(AggregateFunction.isSumFunction(aggregateFunction))) {
 				aggregationFields.add(criteriaBuilder.sum(buildFieldExpression(fields, root)));
 				
-			} else if (Boolean.TRUE.equals(AggregateFunction.isAvgFunction(aggregateFunction.name()))) {
+			} else if (Boolean.TRUE.equals(AggregateFunction.isAvgFunction(aggregateFunction))) {
 				aggregationFields.add(criteriaBuilder.avg(buildFieldExpression(fields, root)));
 				
-			} else if (Boolean.TRUE.equals(AggregateFunction.isCountFunction(aggregateFunction.name()))) {
+			} else if (Boolean.TRUE.equals(AggregateFunction.isCountFunction(aggregateFunction))) {
 				aggregationFields.add(criteriaBuilder.count(buildFieldExpression(fields, root)));
 				
-			} else if (Boolean.TRUE.equals(AggregateFunction.isCountDistinctFunction(aggregateFunction.name()))) {
+			} else if (Boolean.TRUE.equals(AggregateFunction.isCountDistinctFunction(aggregateFunction))) {
 				aggregationFields.add(criteriaBuilder.countDistinct(buildFieldExpression(fields, root)));
 				
 			} else {

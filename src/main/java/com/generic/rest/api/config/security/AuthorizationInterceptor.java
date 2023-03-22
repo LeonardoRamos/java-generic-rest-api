@@ -24,8 +24,8 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
 		if (objectHandler instanceof HandlerMethod) {
 			HandlerMethod handler = (HandlerMethod) objectHandler;
             
-			WithoutSecurity withoutSecurity = handler.getMethodAnnotation(WithoutSecurity.class);
-            if (withoutSecurity == null) {
+			NoSecurity noSecurity = handler.getMethodAnnotation(NoSecurity.class);
+            if (noSecurity == null) {
             	
             	String token = tokenAuthenticationService.getTokenFromRequest(request);
             	if (token == null || "".equals(token) || Boolean.FALSE.equals(tokenAuthenticationService.validateToken(token))) {
