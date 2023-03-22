@@ -2,7 +2,6 @@ package com.generic.rest.api.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -31,7 +30,7 @@ public class Address extends BaseApiEntity {
 	@JoinColumn(name = "id_country")
 	private Country country;
 	
-	@OneToOne(fetch = FetchType.EAGER)
+	@OneToOne
 	@Cascade(CascadeType.SAVE_UPDATE)
 	@JoinColumn(name = "id_user")
 	@JsonBackReference
