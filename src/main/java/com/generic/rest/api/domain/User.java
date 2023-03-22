@@ -10,11 +10,12 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
+import com.generic.rest.api.domain.core.AuthEntity;
 import com.generic.rest.api.domain.core.BaseApiEntity;
 
 @Entity
 @Table(name = "user_account")
-public class User extends BaseApiEntity {
+public class User extends BaseApiEntity implements AuthEntity {
 	
 	@Column(name = "name", length = 80)
 	private String name;
@@ -103,7 +104,22 @@ public class User extends BaseApiEntity {
 	public void setAddress(Address address) {
 		this.address = address;
 	}
+	
+	@Override
+	public String getPrincipalCredential() {
+		return getEmail();
+	}
 
+	@Override
+	public String getCredentialRole() {
+		return getRole().name();
+	}
+
+	@Override
+	public String getAdditionalInfo() {
+		return getName();
+	}
+	
 	public static UserBuilder builder() {
 		return new UserBuilder();
 	}

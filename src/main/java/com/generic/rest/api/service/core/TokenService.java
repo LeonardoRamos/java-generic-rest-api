@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import com.generic.rest.api.BaseConstants;
 import com.generic.rest.api.BaseConstants.JWTAUTH;
 import com.generic.rest.api.BaseConstants.MSGERROR;
-import com.generic.rest.api.domain.User;
+import com.generic.rest.api.domain.core.AuthEntity;
 import com.generic.rest.api.util.StringParserUtils;
 import com.generic.rest.api.util.TokenUtils;
 
@@ -38,15 +38,15 @@ public class TokenService {
 	@Value(JWTAUTH.HEADER_STRINGS)
 	private String headerString;
 	
-	public String generateToken(User user) {
+	public String generateToken(AuthEntity authEntity) {
 		Map<String, Object> claims = new HashMap<>();
-		claims.put(JWTAUTH.CLAIM_USER_EXTERNAL_ID, user.getExternalId());
-		claims.put(JWTAUTH.CLAIM_EMAIL, user.getEmail());
-		claims.put(JWTAUTH.CLAIM_ROLE, user.getRole().name());
-		claims.put(JWTAUTH.CLAIM_NAME, user.getName());
+		claims.put(JWTAUTH.CLAIM_EXTERNAL_ID, authEntity.getExternalId());
+		claims.put(JWTAUTH.CLAIM_PRINCIPAL_CREDENTIAL, authEntity.getPrincipalCredential());
+		claims.put(JWTAUTH.CLAIM_CREDENTIAL_ROLE, authEntity.getCredentialRole());
+		claims.put(JWTAUTH.CLAIM_ADDITIONAL_INFO, authEntity.getAdditionalInfo());
 		
 		return Jwts.builder()
-		 		 .setSubject(user.getName())
+		 		 .setSubject(authEntity.getAdditionalInfo())
 		 		 .setClaims(claims)
 		 		 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
 				 .signWith(SignatureAlgorithm.HS512, secret)
@@ -60,7 +60,7 @@ public class TokenService {
 						.setSigningKey(secret)
 						.parseClaimsJws(StringParserUtils.replace(token, tokenPrefix, ""))
 						.getBody()
-						.get(BaseConstants.JWTAUTH.CLAIM_USER_EXTERNAL_ID);
+						.get(BaseConstants.JWTAUTH.CLAIM_EXTERNAL_ID);
 				
 				if (userAccountExternalId != null && !"".equals(userAccountExternalId)) {
 					return Boolean.TRUE;

@@ -71,10 +71,10 @@ public final class BaseConstants {
 		public static final String SECRET = "${jwt.secret}";
 		public static final String TOKEN_PREFIX = "${jwt.prefix}";
 		public static final String HEADER_STRINGS = "${jwt.header.strings}";
-		public static final String CLAIM_EMAIL = "email";
-		public static final String CLAIM_NAME = "name";
-		public static final String CLAIM_ROLE = "role";
-		public static final String CLAIM_USER_EXTERNAL_ID = "userExternalId";
+		public static final String CLAIM_PRINCIPAL_CREDENTIAL = "principalCredential";
+		public static final String CLAIM_ADDITIONAL_INFO = "additionalInfo";
+		public static final String CLAIM_CREDENTIAL_ROLE = "credentialRole";
+		public static final String CLAIM_EXTERNAL_ID = "externalId";
 		public static final String TOKEN = "token";
 		public static final String BEARER = "Bearer";
 		public static final String X_ACCESS_TOKEN = "x-access-token";

@@ -127,14 +127,14 @@ public class UserService extends BaseApiRestService<User, UserRepository> implem
 	
    	public Boolean allowUserAccess(String authorization, String userAccountExternalId) {
    		String token = TokenUtils.getTokenFromAuthorizationHeader(authorization);
-   		String userAccountExternalIdClaim = tokenAuthenticationService.getTokenClaim(token, BaseConstants.JWTAUTH.CLAIM_USER_EXTERNAL_ID);
+   		String userAccountExternalIdClaim = tokenAuthenticationService.getTokenClaim(token, BaseConstants.JWTAUTH.CLAIM_EXTERNAL_ID);
 		
    		return userAccountExternalId.equals(userAccountExternalIdClaim) || allowAdminAccess(authorization);
    	}
 	
    	public Boolean allowAdminAccess(String authorization) {
    		String token = TokenUtils.getTokenFromAuthorizationHeader(authorization);
-   		String roleClaim = tokenAuthenticationService.getTokenClaim(token, BaseConstants.JWTAUTH.CLAIM_ROLE);
+   		String roleClaim = tokenAuthenticationService.getTokenClaim(token, BaseConstants.JWTAUTH.CLAIM_CREDENTIAL_ROLE);
 		
    		return Role.ADMIN.name().equals(roleClaim);
    	}
