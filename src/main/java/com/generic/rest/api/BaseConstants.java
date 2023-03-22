@@ -1,8 +1,8 @@
 package com.generic.rest.api;
 
-public final class Constants {
+public final class BaseConstants {
 	
-	private Constants() {
+	private BaseConstants() {
 		
 	}
 	
@@ -59,28 +59,6 @@ public final class Constants {
 		public static final String ID_PATH = PATH_SEPARATOR + ID_PARAM;
 		public static final String HEALTH_PATH = PATH_SEPARATOR + "health";
 		public static final String BASE_PATH = PATH_SEPARATOR + VERSION + PATH_SEPARATOR;
-
-		public static final class LOGIN {
-			
-			private LOGIN() {
-				
-			}
-			
-			public static final String EMAIL_FIELD = "email";
-			public static final String PASSWORD_FIELD = "password";
-			public static final String NAME = "auth/login";
-			public static final String PATH = PATH_SEPARATOR + NAME;
-		}
-
-		public static final class USER {
-			
-			private USER() {
-				
-			}
-			
-			public static final String NAME = "users";
-			public static final String PATH = BASE_PATH + NAME;
-		}
 	}
 
 	public final class JWTAUTH {
@@ -127,7 +105,6 @@ public final class Constants {
 		}
 		
 		public static final String DEFAULT_ERROR_CODE = "ERROR_CODE";
-		public static final String AUTHENTICATION_ERROR = "Wrong username or password";
 		public static final String ENTITIES_NOT_FOUND_ERROR = "No entities found for requestFilter [%s]";
 		public static final String BAD_REQUEST_ERROR = "Malformed request for requestFilter [%s]";
 		public static final String ENTITY_NOT_FOUND_ERROR = "No entity found for externalId [%s]";

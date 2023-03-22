@@ -12,7 +12,7 @@ import org.springframework.boot.actuate.health.Status;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.generic.rest.api.Constants.HEALTHCHECK;
+import com.generic.rest.api.BaseConstants.HEALTHCHECK;
 
 public class DatabaseHealthIndicator extends AbstractHealthIndicator implements InitializingBean {
 

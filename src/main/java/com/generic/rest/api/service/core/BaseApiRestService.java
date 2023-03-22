@@ -4,7 +4,7 @@ import java.util.Calendar;
 
 import org.springframework.stereotype.Service;
 
-import com.generic.rest.api.Constants.MSGERROR;
+import com.generic.rest.api.BaseConstants.MSGERROR;
 import com.generic.rest.api.domain.core.BaseApiEntity;
 import com.generic.rest.api.exception.ApiException;
 import com.generic.rest.api.exception.NotFoundApiException;

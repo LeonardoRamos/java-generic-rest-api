@@ -9,8 +9,8 @@ import java.util.TimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.generic.rest.api.Constants;
-import com.generic.rest.api.Constants.MSGERROR;
+import com.generic.rest.api.BaseConstants;
+import com.generic.rest.api.BaseConstants.MSGERROR;
 
 public class CalendarUtils {
 	
@@ -25,9 +25,9 @@ public class CalendarUtils {
 			return null;
 		}
 		
-		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constants.DATE_TIMEZONE));
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(BaseConstants.DATE_TIMEZONE));
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat, 
-				new Locale(Constants.LOCALE_PT, Constants.LOCALE_BR));
+				new Locale(BaseConstants.LOCALE_PT, BaseConstants.LOCALE_BR));
 
 		try {
 			calendar.setTime(simpleDateFormat.parse(dateText));
@@ -41,8 +41,8 @@ public class CalendarUtils {
 	}
 	
 	public static Calendar createCalendarFromMiliseconds(Long miliseconds) {
-		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constants.DATE_TIMEZONE), 
-				new Locale(Constants.LOCALE_PT, Constants.LOCALE_BR));
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(BaseConstants.DATE_TIMEZONE), 
+				new Locale(BaseConstants.LOCALE_PT, BaseConstants.LOCALE_BR));
 		calendar.setTimeInMillis(miliseconds);
 		return calendar;
 	}

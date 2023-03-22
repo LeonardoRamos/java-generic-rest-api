@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.generic.rest.api.Constants.CONTROLLER;
-import com.generic.rest.api.Constants.JWTAUTH;
+import com.generic.rest.api.ApiConstants.CONTROLLER;
+import com.generic.rest.api.BaseConstants.JWTAUTH;
 import com.generic.rest.api.config.security.NoSecurity;
 import com.generic.rest.api.exception.NotFoundApiException;
 import com.generic.rest.api.service.UserService;

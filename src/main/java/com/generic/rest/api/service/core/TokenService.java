@@ -1,4 +1,4 @@
-package com.generic.rest.api.service;
+package com.generic.rest.api.service.core;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.generic.rest.api.Constants;
-import com.generic.rest.api.Constants.JWTAUTH;
-import com.generic.rest.api.Constants.MSGERROR;
+import com.generic.rest.api.BaseConstants;
+import com.generic.rest.api.BaseConstants.JWTAUTH;
+import com.generic.rest.api.BaseConstants.MSGERROR;
 import com.generic.rest.api.domain.User;
 import com.generic.rest.api.util.StringParserUtils;
 import com.generic.rest.api.util.TokenUtils;
@@ -22,9 +22,9 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 @Service
-public class TokenAuthenticationService {
+public class TokenService {
 	
-	private static final Logger log = LoggerFactory.getLogger(TokenAuthenticationService.class);
+	private static final Logger log = LoggerFactory.getLogger(TokenService.class);
 
 	@Value(JWTAUTH.EXPIRATION_TIME)
 	private Long expirationTime; 
@@ -60,7 +60,7 @@ public class TokenAuthenticationService {
 						.setSigningKey(secret)
 						.parseClaimsJws(StringParserUtils.replace(token, tokenPrefix, ""))
 						.getBody()
-						.get(Constants.JWTAUTH.CLAIM_USER_EXTERNAL_ID);
+						.get(BaseConstants.JWTAUTH.CLAIM_USER_EXTERNAL_ID);
 				
 				if (userAccountExternalId != null && !"".equals(userAccountExternalId)) {
 					return Boolean.TRUE;

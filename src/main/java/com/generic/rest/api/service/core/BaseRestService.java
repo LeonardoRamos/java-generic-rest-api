@@ -4,7 +4,7 @@ import javax.persistence.EntityNotFoundException;
 
 import org.springframework.stereotype.Service;
 
-import com.generic.rest.api.Constants.MSGERROR;
+import com.generic.rest.api.BaseConstants.MSGERROR;
 import com.generic.rest.api.domain.core.BaseEntity;
 import com.generic.rest.api.exception.ApiException;
 import com.generic.rest.api.exception.NotFoundApiException;

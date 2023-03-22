@@ -9,15 +9,15 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.generic.rest.api.Constants.MSGERROR;
+import com.generic.rest.api.BaseConstants.MSGERROR;
 import com.generic.rest.api.exception.UnauthorizedApiException;
-import com.generic.rest.api.service.TokenAuthenticationService;
+import com.generic.rest.api.service.core.TokenService;
 
 @Component
 public class AuthorizationInterceptor implements HandlerInterceptor {
 
 	@Autowired
-	private TokenAuthenticationService tokenAuthenticationService;
+	private TokenService tokenAuthenticationService;
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object objectHandler) {

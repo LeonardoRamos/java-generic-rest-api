@@ -10,22 +10,24 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.generic.rest.api.Constants;
-import com.generic.rest.api.Constants.CONTROLLER.LOGIN;
-import com.generic.rest.api.Constants.JWTAUTH;
-import com.generic.rest.api.Constants.MSGERROR;
+import com.generic.rest.api.ApiConstants.CONTROLLER.LOGIN;
+import com.generic.rest.api.BaseConstants;
+import com.generic.rest.api.BaseConstants.JWTAUTH;
+import com.generic.rest.api.ApiConstants.MSGERROR;
 import com.generic.rest.api.domain.Address;
 import com.generic.rest.api.domain.Role;
 import com.generic.rest.api.domain.User;
 import com.generic.rest.api.exception.ApiException;
 import com.generic.rest.api.exception.NotFoundApiException;
 import com.generic.rest.api.repository.UserRepository;
+import com.generic.rest.api.service.core.AuthenticationService;
 import com.generic.rest.api.service.core.BaseApiRestService;
+import com.generic.rest.api.service.core.TokenService;
 import com.generic.rest.api.util.EncrypterUtils;
 import com.generic.rest.api.util.TokenUtils;
 
 @Service
-public class UserService extends BaseApiRestService<User, UserRepository> {
+public class UserService extends BaseApiRestService<User, UserRepository> implements AuthenticationService {
 	
 	@Autowired
 	private UserRepository userRepository;
@@ -34,7 +36,7 @@ public class UserService extends BaseApiRestService<User, UserRepository> {
 	private AddressService addressService;
 	
 	@Autowired
-	private TokenAuthenticationService tokenAuthenticationService;
+	private TokenService tokenAuthenticationService;
 	
 	@Override
 	protected UserRepository getRepository() {
@@ -46,6 +48,7 @@ public class UserService extends BaseApiRestService<User, UserRepository> {
 		return User.class;
 	}
 	
+	@Override
 	public Map<String, String> attemptAuthentication(Map<String, String> credentials) throws AuthenticationException {
 		User userAccount = getUserByEmailAndActive(credentials.get(LOGIN.EMAIL_FIELD), Boolean.TRUE);
 		
@@ -124,14 +127,14 @@ public class UserService extends BaseApiRestService<User, UserRepository> {
 	
    	public Boolean allowUserAccess(String authorization, String userAccountExternalId) {
    		String token = TokenUtils.getTokenFromAuthorizationHeader(authorization);
-   		String userAccountExternalIdClaim = tokenAuthenticationService.getTokenClaim(token, Constants.JWTAUTH.CLAIM_USER_EXTERNAL_ID);
+   		String userAccountExternalIdClaim = tokenAuthenticationService.getTokenClaim(token, BaseConstants.JWTAUTH.CLAIM_USER_EXTERNAL_ID);
 		
    		return userAccountExternalId.equals(userAccountExternalIdClaim) || allowAdminAccess(authorization);
    	}
 	
    	public Boolean allowAdminAccess(String authorization) {
    		String token = TokenUtils.getTokenFromAuthorizationHeader(authorization);
-   		String roleClaim = tokenAuthenticationService.getTokenClaim(token, Constants.JWTAUTH.CLAIM_ROLE);
+   		String roleClaim = tokenAuthenticationService.getTokenClaim(token, BaseConstants.JWTAUTH.CLAIM_ROLE);
 		
    		return Role.ADMIN.name().equals(roleClaim);
    	}

@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonMappingException.Reference;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
-import com.generic.rest.api.Constants.MSGERROR;
+import com.generic.rest.api.BaseConstants.MSGERROR;
 import com.generic.rest.api.exception.ApiException;
 
 @RestControllerAdvice

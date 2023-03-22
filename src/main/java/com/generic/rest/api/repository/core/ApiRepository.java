@@ -16,7 +16,7 @@ import javax.persistence.criteria.Selection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.generic.rest.api.Constants.MSGERROR;
+import com.generic.rest.api.BaseConstants.MSGERROR;
 import com.generic.rest.api.domain.core.BaseEntity;
 import com.generic.rest.api.domain.core.filter.RequestFilter;
 import com.generic.rest.api.exception.BadRequestApiException;

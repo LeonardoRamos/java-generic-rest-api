@@ -26,9 +26,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.generic.rest.api.Constants.CONTROLLER;
-import com.generic.rest.api.Constants.CONTROLLER.LOGIN;
-import com.generic.rest.api.Constants.JWTAUTH;
+import com.generic.rest.api.BaseConstants.CONTROLLER;
+import com.generic.rest.api.ApiConstants;
+import com.generic.rest.api.ApiConstants.CONTROLLER.LOGIN;
+import com.generic.rest.api.BaseConstants.JWTAUTH;
 import com.generic.rest.api.domain.Address;
 import com.generic.rest.api.domain.Country;
 import com.generic.rest.api.domain.Role;
@@ -142,7 +143,7 @@ class UserControllerTest {
         		  	.address(address)
                     .build();
 
-		MvcResult result = mvc.perform(MockMvcRequestBuilders.post(new StringBuilder(CONTROLLER.USER.PATH).toString())
+		MvcResult result = mvc.perform(MockMvcRequestBuilders.post(new StringBuilder(ApiConstants.CONTROLLER.USER.PATH).toString())
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(user))
 			.headers(authHeader))
@@ -167,7 +168,7 @@ class UserControllerTest {
 		usersDatabase.get(0).getAddress().setState(newState);
 		usersDatabase.get(0).setName(newName);
     	 
-		MvcResult result = mvc.perform(MockMvcRequestBuilders.put(new StringBuilder(CONTROLLER.USER.PATH)
+		MvcResult result = mvc.perform(MockMvcRequestBuilders.put(new StringBuilder(ApiConstants.CONTROLLER.USER.PATH)
        		  .append(CONTROLLER.PATH_SEPARATOR)
        		  .append(usersDatabase.get(0).getExternalId())
        		  .toString())
@@ -188,7 +189,7 @@ class UserControllerTest {
      
 	@Test
 	void getUserByExternalId_NotFound() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
+		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(ApiConstants.CONTROLLER.USER.PATH)
 				.append(CONTROLLER.PATH_SEPARATOR)
 				.append("1234")
 				.toString())
@@ -198,7 +199,7 @@ class UserControllerTest {
 
 	@Test
 	void getUserByExternalId_Ok() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
+		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(ApiConstants.CONTROLLER.USER.PATH)
 				.append(CONTROLLER.PATH_SEPARATOR)
 				.append(usersDatabase.get(0).getExternalId())
 				.toString())
@@ -209,7 +210,7 @@ class UserControllerTest {
      
 	@Test
 	void deleteUserByExternalId_NotFound() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.delete(new StringBuilder(CONTROLLER.USER.PATH)
+		mvc.perform(MockMvcRequestBuilders.delete(new StringBuilder(ApiConstants.CONTROLLER.USER.PATH)
 				.append(CONTROLLER.PATH_SEPARATOR)
 				.append("1234")
 				.toString())
@@ -219,7 +220,7 @@ class UserControllerTest {
 
 	@Test
 	void deleteUserByExternalId_Ok() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.delete(new StringBuilder(CONTROLLER.USER.PATH)
+		mvc.perform(MockMvcRequestBuilders.delete(new StringBuilder(ApiConstants.CONTROLLER.USER.PATH)
 				.append(CONTROLLER.PATH_SEPARATOR)
 				.append(usersDatabase.get(9).getExternalId())
 				.toString())
@@ -231,7 +232,7 @@ class UserControllerTest {
      
 	@Test
 	void getAllUsers_Ok() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH).toString())
+		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(ApiConstants.CONTROLLER.USER.PATH).toString())
 				.headers(authHeader))
            	.andExpect(status().isOk())
            	.andExpect(MockMvcResultMatchers.jsonPath("$.records[0]").exists())
@@ -241,7 +242,7 @@ class UserControllerTest {
      
 	@Test
 	void getAllUsersSingleProjection_Ok() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
+		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(ApiConstants.CONTROLLER.USER.PATH)
 				.append("?projection=[email]")
 				.toString())
 		   .headers(authHeader))
@@ -255,7 +256,7 @@ class UserControllerTest {
      
 	@Test
 	void getAllUsersNestedSingleProjection_Ok() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
+		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(ApiConstants.CONTROLLER.USER.PATH)
 				.append("?projection=[address.country.name]")
 				.toString())
 		   .headers(authHeader))
@@ -269,7 +270,7 @@ class UserControllerTest {
      
 	@Test
 	void getAllUsersNestedProjections_Ok() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
+		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(ApiConstants.CONTROLLER.USER.PATH)
 				.append("?projection=[address.country.name,address.street,address.streetNumber]")
 				.toString())
 		   .headers(authHeader))
@@ -289,7 +290,7 @@ class UserControllerTest {
 	
 	@Test
 	void getAllUsersFilter_Ok() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
+		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(ApiConstants.CONTROLLER.USER.PATH)
 				.append("?filter=[email=like=test1;address.street=like=Street,address.country.name=Portugal]")
 				.toString())
 		   .headers(authHeader))
@@ -302,7 +303,7 @@ class UserControllerTest {
 	
 	@Test
 	void getAllUsersAggregationMultipleCountDistinct_Ok() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
+		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(ApiConstants.CONTROLLER.USER.PATH)
 				.append("?countDistinct=[address.country.name,address.state]")
 				.toString())
 		   .headers(authHeader))
@@ -313,7 +314,7 @@ class UserControllerTest {
 	
 	@Test
 	void getAllUsersAggregationMultipleCount_Ok() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
+		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(ApiConstants.CONTROLLER.USER.PATH)
 				.append("?count=[address.street,address.streetNumber]&countDistinct=[id]")
 				.toString())
 		   .headers(authHeader))
@@ -325,7 +326,7 @@ class UserControllerTest {
 	
 	@Test
 	void getAllUsersGroupByCount_Ok() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
+		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(ApiConstants.CONTROLLER.USER.PATH)
 				.append("?count=[name]&groupBy=[address.country.name]")
 				.toString())
 		   .headers(authHeader))
@@ -338,7 +339,7 @@ class UserControllerTest {
 	
 	@Test
 	void getAllUsersSumGroupBy_Ok() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
+		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(ApiConstants.CONTROLLER.USER.PATH)
 				.append("?sum=[age]&groupBy=[address.country.name]")
 				.toString())
 		   .headers(authHeader))
@@ -351,7 +352,7 @@ class UserControllerTest {
 	
 	@Test
 	void getAllUsersAvgGroupBy_Ok() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(CONTROLLER.USER.PATH)
+		mvc.perform(MockMvcRequestBuilders.get(new StringBuilder(ApiConstants.CONTROLLER.USER.PATH)
 				.append("?avg=[age]&groupBy=[address.country.name]")
 				.toString())
 		   .headers(authHeader))

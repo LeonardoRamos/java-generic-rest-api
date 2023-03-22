@@ -16,9 +16,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 
-import com.generic.rest.api.Constants;
-import com.generic.rest.api.Constants.ERRORKEYS;
-import com.generic.rest.api.Constants.MSGERROR;
+import com.generic.rest.api.BaseConstants;
+import com.generic.rest.api.BaseConstants.ERRORKEYS;
+import com.generic.rest.api.BaseConstants.MSGERROR;
 import com.generic.rest.api.exception.ApiException;
 
 @Component
@@ -34,7 +34,7 @@ public class ErrorParser {
 		List<Map<String, String>> errors = new ArrayList<>();
 
 		if (bindingResult != null) {
-			String message = Constants.MSGERROR.VALIDATION_ERROR;
+			String message = BaseConstants.MSGERROR.VALIDATION_ERROR;
 			String code = getErrorCode(message);
 					
 			for (ObjectError objectError: bindingResult.getAllErrors()) {
@@ -104,7 +104,7 @@ public class ErrorParser {
 	
 	private String getErrorCode(String message) {
 		try {
-			Class<?>[] innerClasses = Constants.class.getClasses();
+			Class<?>[] innerClasses = BaseConstants.class.getClasses();
 			
 			for (int i = 0; i < innerClasses.length; i++) {
 				if (innerClasses[i].getSimpleName().equals(ERRORKEYS.MSG_ERROR)) {

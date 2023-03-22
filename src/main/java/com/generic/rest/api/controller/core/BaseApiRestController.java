@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.generic.rest.api.Constants.CONTROLLER;
+import com.generic.rest.api.BaseConstants.CONTROLLER;
 import com.generic.rest.api.domain.core.BaseApiEntity;
 import com.generic.rest.api.exception.ApiException;
 import com.generic.rest.api.service.core.BaseApiRestService;

@@ -2,7 +2,7 @@ package com.generic.rest.api.util;
 
 import java.util.List;
 
-import com.generic.rest.api.Constants.JWTAUTH;
+import com.generic.rest.api.BaseConstants.JWTAUTH;
 
 public class TokenUtils {
 	

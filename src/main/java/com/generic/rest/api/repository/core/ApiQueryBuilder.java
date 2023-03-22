@@ -16,8 +16,8 @@ import javax.persistence.criteria.Selection;
 
 import org.springframework.stereotype.Component;
 
-import com.generic.rest.api.Constants;
-import com.generic.rest.api.Constants.MSGERROR;
+import com.generic.rest.api.BaseConstants;
+import com.generic.rest.api.BaseConstants.MSGERROR;
 import com.generic.rest.api.domain.core.filter.AggregateFunction;
 import com.generic.rest.api.domain.core.filter.FilterExpression;
 import com.generic.rest.api.domain.core.filter.FilterField;
@@ -233,7 +233,7 @@ public class ApiQueryBuilder<E> {
 				return criteriaBuilder.lessThan(buildFieldExpression(
 						fields, root), (Comparable) getTypifiedValue(filterField, fields));
 			case NE:
-				if (Constants.NULL_VALUE.equals(filterField.getValue())) {
+				if (BaseConstants.NULL_VALUE.equals(filterField.getValue())) {
 					return criteriaBuilder.isNotNull(buildFieldExpression(fields, root));
 				}
 				return criteriaBuilder.notEqual(buildFieldExpression(
@@ -243,7 +243,7 @@ public class ApiQueryBuilder<E> {
 						"%" + ((String) getTypifiedValue(filterField, fields)).toUpperCase() + "%");
 			case EQ:
 			default:
-				if (Constants.NULL_VALUE.equals(filterField.getValue())) {
+				if (BaseConstants.NULL_VALUE.equals(filterField.getValue())) {
 					return criteriaBuilder.isNull(buildFieldExpression(fields, root));
 				}
 				return criteriaBuilder.equal(buildFieldExpression(

@@ -5,7 +5,7 @@ import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerF
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.generic.rest.api.Constants.TOMCAT;
+import com.generic.rest.api.BaseConstants.TOMCAT;
 
 @Configuration
 public class TomcatWebServerCustomizer {

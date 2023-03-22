@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.generic.rest.api.Constants;
+import com.generic.rest.api.BaseConstants;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class ReflectionUtils {
@@ -107,7 +107,7 @@ public class ReflectionUtils {
 		if (Boolean.TRUE.equals(StringParserUtils.isNumeric(value))) {
 			return CalendarUtils.createCalendarFromMiliseconds(Double.valueOf(value).longValue());
 		}
-		return CalendarUtils.createCalendarFromString(value, Constants.DEFAULT_DATE_FORMAT);
+		return CalendarUtils.createCalendarFromString(value, BaseConstants.DEFAULT_DATE_FORMAT);
 	}
 	
 }
