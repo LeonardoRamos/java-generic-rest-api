@@ -1,6 +1,6 @@
 # Java-Generic-Rest-Api
 
-API Rest developed using *Java*. Its purpose is to serve as a POC of https://github.com/LeonardoRamos/generic-rest-core-lib to make it easier to provide and serve data from any API that uses it as a framework.
+API Rest developed using *Java*. Its purpose is to serve as a POC of https://github.com/LeonardoRamos/generic-rest-core-lib to make it easier to provide and serve data with JPA from any API that uses it as a framework.
 
 
 ## Setting up
