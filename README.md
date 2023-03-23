@@ -79,6 +79,19 @@ It performs Count Distinct function in the specified fields, and follows the fol
 
 `countDistinct = [field1, field2, field3...]`
 
+### Error response format
+
+```json
+{
+   "errors":[
+      {
+         "code":"ERROR_CODE",
+         "message":"Error parsing projections of filter [unknownField]"
+      }
+   ]
+}
+```
+
 ### Extra Parameters
 - offset (DEFAULT_OFFSET = 0)
 - limit (DEFAULT_LIMIT = 20 and MAX_LIMIT = 100)
