@@ -3,6 +3,7 @@ package com.generic.rest.api.controller;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -66,6 +67,9 @@ class UserControllerTest {
      
 	@BeforeEach
 	void setup() throws JsonProcessingException, Exception {
+		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
+		objectMapper.setDateFormat(dt);
+		
 		usersDatabase = new ArrayList<>();
 		
 		String basePassword = "test";
