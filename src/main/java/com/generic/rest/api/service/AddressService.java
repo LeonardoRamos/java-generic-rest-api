@@ -30,7 +30,7 @@ public class AddressService extends BaseApiRestService<Address, AddressRepositor
 	
 	@Override
 	public Address save(Address address) throws ApiException {
-		setCountry(address);
+		this.setCountry(address.getCountry(), address);
 		return super.save(address);
 	}
 	
@@ -38,22 +38,21 @@ public class AddressService extends BaseApiRestService<Address, AddressRepositor
 		addressDatabase.setState(address.getState());
 		addressDatabase.setStreet(address.getStreet());
 		addressDatabase.setStreetNumber(address.getStreetNumber());
-		return update(addressDatabase);
-	}
-	
-	@Override
-	public Address update(Address address) throws ApiException {
-		setCountry(address);
-		return super.update(address);
+		
+		if (address.getCountry() != null && !address.getCountry().getName().equals(addressDatabase.getCountry().getName())) {
+			this.setCountry(address.getCountry(), addressDatabase);
+		}
+		
+		return this.update(addressDatabase);
 	}
 
-	private void setCountry(Address address) {
-		Country country = countryService.getByName(address.getCountry().getName());
+	private void setCountry(Country country, Address address) {
+		Country countryDatabase = this.countryService.getByName(address.getCountry().getName());
 		
-		if (country != null) {
-			address.setCountry(country);
+		if (countryDatabase != null) {
+			address.setCountry(countryDatabase);
 		} else {
-			address.setCountry(countryService.save(address.getCountry()));
+			address.setCountry(this.countryService.save(address.getCountry()));
 		}
 	}
 

@@ -1,17 +1,14 @@
 package com.generic.rest.api.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
-
 import com.generic.rest.core.domain.AuthEntity;
 import com.generic.rest.core.domain.BaseApiEntity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "user_account")
@@ -34,7 +31,6 @@ public class User extends BaseApiEntity implements AuthEntity {
 	private Role role;
 
 	@OneToOne(mappedBy = "user")
-	@Cascade(CascadeType.SAVE_UPDATE)
 	private Address address;
 	
 	public User() {}
@@ -48,7 +44,7 @@ public class User extends BaseApiEntity implements AuthEntity {
 		this.address = builder.address;
 		this.setId(builder.getId());
 		this.setExternalId(builder.getExternalId());
-		this.setActive(builder.getActive());
+		this.setActive(builder.isActive());
 		this.setInsertDate(builder.getInsertDate());
 		this.setUpdateDate(builder.getUpdateDate());
 		this.setDeleteDate(builder.getRemoveDate());
