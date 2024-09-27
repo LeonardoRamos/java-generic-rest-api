@@ -19,12 +19,12 @@ import com.generic.rest.core.BaseConstants.JWTAUTH;
 import com.generic.rest.core.exception.ApiException;
 import com.generic.rest.core.exception.NotFoundApiException;
 import com.generic.rest.core.service.AuthenticationService;
-import com.generic.rest.core.service.BaseApiRestService;
-import com.generic.rest.core.service.TokenService;
+import com.generic.rest.core.service.impl.BaseApiRestServiceImpl;
+import com.generic.rest.core.service.impl.TokenService;
 import com.generic.rest.core.util.encrypter.BCryptPasswordEncrypter;
 
 @Service
-public class UserService extends BaseApiRestService<User, UserRepository> implements AuthenticationService {
+public class UserService extends BaseApiRestServiceImpl<User, UserRepository> implements AuthenticationService {
 	
 	@Autowired
 	private UserRepository userRepository;

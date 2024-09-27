@@ -6,10 +6,10 @@ import org.springframework.stereotype.Service;
 import com.generic.rest.api.domain.Country;
 import com.generic.rest.api.repository.CountryRepository;
 import com.generic.rest.core.exception.ApiException;
-import com.generic.rest.core.service.BaseApiRestService;
+import com.generic.rest.core.service.impl.BaseApiRestServiceImpl;
 
 @Service
-public class CountryService extends BaseApiRestService<Country, CountryRepository> {
+public class CountryService extends BaseApiRestServiceImpl<Country, CountryRepository> {
 	
 	@Autowired
 	private CountryRepository countryRepository;
