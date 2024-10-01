@@ -5,7 +5,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<name>java-generic-rest-api</name>
-	<version>1.0.0</version>
+	<version>1.1.0</version>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.generic.rest.api</groupId>
 	<artifactId>java-generic-rest-api</artifactId>
@@ -15,12 +15,25 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.3.1.RELEASE</version>
+		<version>3.3.4</version>
 		<relativePath />
 	</parent>
 
 	<properties>
-		<java.version>11</java.version>
+		<java.version>21</java.version>
+		<maven.compiler.source>${java.version}</maven.compiler.source>
+		<maven.compiler.target>${java.version}</maven.compiler.target>
+		<downloadSources>true</downloadSources>
+		<downloadJavadocs>true</downloadJavadocs>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		
+		<!-- Dependencies -->
+		<postgresql-version>42.7.4</postgresql-version>
+		<generic-rest-core-lib-version>1.1.0</generic-rest-core-lib-version>
+		
+		<!--  Plugins -->
+		<maven-eclipse-plugin-version>2.10</maven-eclipse-plugin-version>
 	</properties>
 
 	<profiles>
@@ -59,32 +72,53 @@
 
 		<dependency>
 			<groupId>org.flywaydb</groupId>
-			<artifactId>flyway-core</artifactId>
+			<artifactId>flyway-database-postgresql</artifactId>
 			<scope>compile</scope>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.4.3</version><!--$NO-MVN-MAN-VER$-->
+			<version>${postgresql-version}</version><!--$NO-MVN-MAN-VER$-->
 			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>com.generic.rest.core</groupId>
 			<artifactId>generic-rest-core-lib</artifactId>
-			<version>1.0.0</version>
+			<version>${generic-rest-core-lib-version}</version>
 		</dependency>
 	</dependencies>
 
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-		<finalName>java-generic-rest-api</finalName>
+     	<plugins>
+     		<plugin>
+            	<groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                   	<release>${java.version}</release>
+                    <parameters>true</parameters>
+                </configuration>
+            </plugin>
+            
+     	    <plugin>
+	        	<groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-surefire-plugin</artifactId>
+		        <configuration>
+		            <trimStackTrace>false</trimStackTrace>
+		        </configuration>
+		    </plugin>
+		    
+		    <plugin>
+	        	<groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-eclipse-plugin</artifactId>
+		        <version>${maven-eclipse-plugin-version}</version>
+		        <configuration>
+		            <downloadSources>true</downloadSources>
+		            <downloadjavadocs>true</downloadjavadocs>
+		        </configuration>
+		    </plugin>
+        </plugins>
 	</build>
 
 </project>

@@ -6,10 +6,10 @@ import org.springframework.stereotype.Service;
 import com.generic.rest.api.domain.Country;
 import com.generic.rest.api.repository.CountryRepository;
 import com.generic.rest.core.exception.ApiException;
-import com.generic.rest.core.service.BaseApiRestService;
+import com.generic.rest.core.service.impl.BaseApiRestServiceImpl;
 
 @Service
-public class CountryService extends BaseApiRestService<Country, CountryRepository> {
+public class CountryService extends BaseApiRestServiceImpl<Country, CountryRepository> {
 	
 	@Autowired
 	private CountryRepository countryRepository;
@@ -30,14 +30,8 @@ public class CountryService extends BaseApiRestService<Country, CountryRepositor
 		return super.save(country);
 	}
 	
-	@Override
-	public Country update(Country country) throws ApiException {
-		country.setName(country.getName().toUpperCase());		
-		return super.update(country);
-	}
-	
 	public Country getByName(String name) {
-		return countryRepository.findByName(name != null ? name.toUpperCase() : name);
+		return this.getRepository().findByName(name != null ? name.toUpperCase() : name);
 	}
 	
 }

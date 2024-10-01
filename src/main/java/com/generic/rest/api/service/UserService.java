@@ -15,16 +15,18 @@ import com.generic.rest.api.ApiConstants.MSGERROR;
 import com.generic.rest.api.domain.Address;
 import com.generic.rest.api.domain.User;
 import com.generic.rest.api.repository.UserRepository;
+import com.generic.rest.core.BaseConstants;
 import com.generic.rest.core.BaseConstants.JWTAUTH;
 import com.generic.rest.core.exception.ApiException;
+import com.generic.rest.core.exception.BadRequestApiException;
 import com.generic.rest.core.exception.NotFoundApiException;
 import com.generic.rest.core.service.AuthenticationService;
-import com.generic.rest.core.service.BaseApiRestService;
-import com.generic.rest.core.service.TokenService;
-import com.generic.rest.core.util.encrypter.BCryptPasswordEncrypter;
+import com.generic.rest.core.service.impl.BaseApiRestServiceImpl;
+import com.generic.rest.core.service.impl.TokenService;
+import com.generic.rest.core.util.encrypter.impl.BCryptTextEncrypter;
 
 @Service
-public class UserService extends BaseApiRestService<User, UserRepository> implements AuthenticationService {
+public class UserService extends BaseApiRestServiceImpl<User, UserRepository> implements AuthenticationService {
 	
 	@Autowired
 	private UserRepository userRepository;
@@ -35,7 +37,7 @@ public class UserService extends BaseApiRestService<User, UserRepository> implem
 	@Autowired
 	private TokenService tokenService;
 	
-	private BCryptPasswordEncrypter passwordEncrypter = new BCryptPasswordEncrypter();
+	private BCryptTextEncrypter passwordEncrypter = new BCryptTextEncrypter();
 	
 	@Override
 	protected UserRepository getRepository() {
@@ -49,46 +51,51 @@ public class UserService extends BaseApiRestService<User, UserRepository> implem
 	
 	@Override
 	public Map<String, String> attemptAuthentication(Map<String, String> credentials) throws AuthenticationException {
-		User userAccount = getUserByEmailAndActive(credentials.get(LOGIN.EMAIL_FIELD), Boolean.TRUE);
+		User userAccount = getUserByEmailAndActive(credentials.get(LOGIN.EMAIL_FIELD), true);
 		
 		if (userAccount == null) {
 			throw new AuthenticationCredentialsNotFoundException(MSGERROR.AUTHENTICATION_ERROR);
 		}
 		
-		if (Boolean.FALSE.equals(passwordEncrypter.matchPassword(credentials.get(LOGIN.PASSWORD_FIELD), userAccount.getPassword()))) {
+		if (!this.passwordEncrypter.matchText(credentials.get(LOGIN.PASSWORD_FIELD), userAccount.getPassword())) {
 			throw new AuthenticationCredentialsNotFoundException(MSGERROR.AUTHENTICATION_ERROR);
 		}
 		
-		return Collections.singletonMap(JWTAUTH.TOKEN, tokenService.generateToken(userAccount));
+		return Collections.singletonMap(JWTAUTH.TOKEN, this.tokenService.generateToken(userAccount));
 	}
 	
 	@Transactional
 	@Override
 	public User save(User user) throws ApiException {
-		user.setPassword(passwordEncrypter.encryptPassword(user.getPassword()));
+		user.setPassword(this.passwordEncrypter.encryptText(user.getPassword()));
 		
-		setAddress(user);
+		this.setAddress(user);
 		
 		User userSaved = super.save(user);
 		userSaved.getAddress().setUser(userSaved);
 		
-		addressService.save(userSaved.getAddress());
+		this.addressService.save(userSaved.getAddress());
 		
 		return userSaved;
 	}
 	
 	@Transactional
 	@Override
-	public User update(User user) throws ApiException {
-		User userDatabase = getByExternalId(user.getExternalId());
+	public User update(String externalId, User user) throws ApiException {
+		
+		if (user.getExternalId() == null || externalId == null || !user.getExternalId().equals(externalId)) {
+			throw new BadRequestApiException(String.format(BaseConstants.MSGERROR.BAD_REQUEST_ERROR, externalId));
+		}
+		
+		User userDatabase = this.getByExternalId(externalId);
 		
 		if (user.getId() == null) {
 			user.setId(userDatabase.getId());
 		}
 
-		userDatabase.setUpdateDate(Calendar.getInstance());
-      
-		if (user.getActive() != null && user.getActive()) {
+		user.setUpdateDate(Calendar.getInstance());
+		
+		if (user.isActive()) {
 			user.setDeleteDate(null);
 		}
 		
@@ -96,32 +103,32 @@ public class UserService extends BaseApiRestService<User, UserRepository> implem
 			user.setPassword(userDatabase.getPassword());
 		
 		} else if (!userDatabase.getPassword().equals(user.getPassword())) {
-			user.setPassword(passwordEncrypter.encryptPassword(user.getPassword()));
+			user.setPassword(this.passwordEncrypter.encryptText(user.getPassword()));
 		}
 		
-		setAddress(user);
+		this.setAddress(user);
 		
-		return userRepository.saveAndFlush(user);
+		return this.getRepository().saveAndFlush(user);
 	}
 	
 	private void setAddress(User user) {
 		if (user.getAddress().getExternalId() == null || "".equals(user.getAddress().getExternalId())) {
-			user.setAddress(addressService.save(user.getAddress()));
+			user.setAddress(this.addressService.save(user.getAddress()));
 			return;
 		}
 		
 		try {
-			Address address = addressService.getByExternalId(user.getAddress().getExternalId());
+			Address address = this.addressService.getByExternalId(user.getAddress().getExternalId());
 			address.setUser(user);
-			user.setAddress(addressService.merge(user.getAddress(), address));
+			user.setAddress(this.addressService.merge(user.getAddress(), address));
 			
 		} catch (NotFoundApiException e) {
-			user.setAddress(addressService.save(user.getAddress()));
+			user.setAddress(this.addressService.save(user.getAddress()));
 		}
 	}
 	
-	public User getUserByEmailAndActive(String email, Boolean active) {
-		return userRepository.findByEmailAndActive(email, active);
+	public User getUserByEmailAndActive(String email, boolean active) {
+		return this.getRepository().findByEmailAndActive(email, active);
 	}
 	
 }
