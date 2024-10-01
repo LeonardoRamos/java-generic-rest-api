@@ -43,17 +43,17 @@ public class AddressService extends BaseApiRestServiceImpl<Address, AddressRepos
 			this.setCountry(address.getCountry(), addressDatabase);
 		}
 		
-		return this.update(addressDatabase);
+		return this.update(address.getExternalId(), addressDatabase);
 	}
 
 	private void setCountry(Country country, Address address) {
-		Country countryDatabase = this.countryService.getByName(address.getCountry().getName());
+		Country countryDatabase = this.countryService.getByName(country.getName());
 		
 		if (countryDatabase != null) {
 			address.setCountry(countryDatabase);
 		} else {
-			address.setCountry(this.countryService.save(address.getCountry()));
+			address.setCountry(this.countryService.save(country));
 		}
 	}
-
+	
 }

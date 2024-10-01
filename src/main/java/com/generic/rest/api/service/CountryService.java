@@ -30,12 +30,6 @@ public class CountryService extends BaseApiRestServiceImpl<Country, CountryRepos
 		return super.save(country);
 	}
 	
-	@Override
-	public Country update(Country country) throws ApiException {
-		country.setName(country.getName().toUpperCase());		
-		return super.update(country);
-	}
-	
 	public Country getByName(String name) {
 		return this.getRepository().findByName(name != null ? name.toUpperCase() : name);
 	}
