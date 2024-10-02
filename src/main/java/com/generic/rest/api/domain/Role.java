@@ -1,5 +1,7 @@
 package com.generic.rest.api.domain;
 
+import java.util.Arrays;
+
 public enum Role {
 	
 	ADMIN("Admin"), 
@@ -15,14 +17,11 @@ public enum Role {
 		return roleName;
 	}
 	
-	public static Role getRoleFromString(String userRole) {
-		for (Role role : Role.values()) {
-			if (role.name().equals(userRole) || role.getRoleName().equals(userRole)) {
-				return role;
-			}
-		}
-		
-		return null;
+	public static Role of(String userRole) {
+		return Arrays.stream(values())
+				.filter(ro -> ro.name().equals(userRole) || ro.getRoleName().equals(userRole))
+				.findFirst()
+				.orElse(null); 
 	}
 	
 }
