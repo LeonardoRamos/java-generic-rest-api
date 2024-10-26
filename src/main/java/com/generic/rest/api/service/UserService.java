@@ -21,8 +21,8 @@ import com.generic.rest.core.exception.ApiException;
 import com.generic.rest.core.exception.BadRequestApiException;
 import com.generic.rest.core.exception.NotFoundApiException;
 import com.generic.rest.core.service.AuthenticationService;
+import com.generic.rest.core.service.TokenService;
 import com.generic.rest.core.service.impl.BaseApiRestServiceImpl;
-import com.generic.rest.core.service.impl.TokenService;
 import com.generic.rest.core.util.encrypter.impl.BCryptTextEncrypter;
 
 @Service
