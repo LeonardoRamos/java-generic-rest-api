@@ -20,23 +20,17 @@ import com.generic.rest.core.BaseConstants.JWTAUTH;
 import com.generic.rest.core.exception.ApiException;
 import com.generic.rest.core.exception.BadRequestApiException;
 import com.generic.rest.core.exception.NotFoundApiException;
-import com.generic.rest.core.service.AuthenticationService;
-import com.generic.rest.core.service.TokenService;
+import com.generic.rest.core.service.auth.AuthenticationService;
+import com.generic.rest.core.service.auth.TokenService;
 import com.generic.rest.core.service.impl.BaseApiRestServiceImpl;
 import com.generic.rest.core.util.encrypter.impl.BCryptTextEncrypter;
 
 @Service
 public class UserService extends BaseApiRestServiceImpl<User, UserRepository> implements AuthenticationService {
 	
-	@Autowired
 	private UserRepository userRepository;
-	
-	@Autowired
 	private AddressService addressService;
-	
-	@Autowired
 	private TokenService tokenService;
-	
 	private BCryptTextEncrypter passwordEncrypter = new BCryptTextEncrypter();
 	
 	@Override
@@ -129,6 +123,21 @@ public class UserService extends BaseApiRestServiceImpl<User, UserRepository> im
 	
 	public User getUserByEmailAndActive(String email, boolean active) {
 		return this.getRepository().findByEmailAndActive(email, active);
+	}
+
+	@Autowired
+	public void setUserRepository(UserRepository userRepository) {
+		this.userRepository = userRepository;
+	}
+
+	@Autowired
+	public void setAddressService(AddressService addressService) {
+		this.addressService = addressService;
+	}
+
+	@Autowired
+	public void setTokenService(TokenService tokenService) {
+		this.tokenService = tokenService;
 	}
 	
 }

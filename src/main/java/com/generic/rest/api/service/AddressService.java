@@ -12,10 +12,7 @@ import com.generic.rest.core.service.impl.BaseApiRestServiceImpl;
 @Service
 public class AddressService extends BaseApiRestServiceImpl<Address, AddressRepository> {
 	
-	@Autowired
 	private AddressRepository addressRepository;
-	
-	@Autowired
 	private CountryService countryService;
 	
 	@Override
@@ -43,7 +40,7 @@ public class AddressService extends BaseApiRestServiceImpl<Address, AddressRepos
 			this.setCountry(address.getCountry(), addressDatabase);
 		}
 		
-		return this.update(address.getExternalId(), addressDatabase);
+		return super.update(address.getExternalId(), addressDatabase);
 	}
 
 	private void setCountry(Country country, Address address) {
@@ -54,6 +51,16 @@ public class AddressService extends BaseApiRestServiceImpl<Address, AddressRepos
 		} else {
 			address.setCountry(this.countryService.save(country));
 		}
+	}
+
+	@Autowired
+	public void setAddressRepository(AddressRepository addressRepository) {
+		this.addressRepository = addressRepository;
+	}
+
+	@Autowired
+	public void setCountryService(CountryService countryService) {
+		this.countryService = countryService;
 	}
 	
 }

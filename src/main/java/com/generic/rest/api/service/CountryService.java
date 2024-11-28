@@ -11,7 +11,6 @@ import com.generic.rest.core.service.impl.BaseApiRestServiceImpl;
 @Service
 public class CountryService extends BaseApiRestServiceImpl<Country, CountryRepository> {
 	
-	@Autowired
 	private CountryRepository countryRepository;
 	
 	@Override
@@ -32,6 +31,11 @@ public class CountryService extends BaseApiRestServiceImpl<Country, CountryRepos
 	
 	public Country getByName(String name) {
 		return this.getRepository().findByName(name != null ? name.toUpperCase() : name);
+	}
+
+	@Autowired
+	public void setCountryRepository(CountryRepository countryRepository) {
+		this.countryRepository = countryRepository;
 	}
 	
 }

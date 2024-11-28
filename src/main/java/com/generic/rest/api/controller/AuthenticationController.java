@@ -25,7 +25,6 @@ public class AuthenticationController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationController.class);
 	
-	@Autowired
 	private UserService userService;
 	
 	@NoSecurity
@@ -33,6 +32,11 @@ public class AuthenticationController {
     public ResponseEntity<Map<String, String>> authenticate(@RequestBody  Map<String, String> credentials) throws NotFoundApiException {
 		LOGGER.info("Processing login for user credentials: [{}]", credentials != null ? credentials.get(LOGIN.EMAIL_FIELD) : null);
 		return new ResponseEntity<>(userService.attemptAuthentication(credentials), HttpStatus.OK);
+	}
+
+	@Autowired
+	public void setUserService(UserService userService) {
+		this.userService = userService;
 	}
 	
 }
