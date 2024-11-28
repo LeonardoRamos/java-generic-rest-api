@@ -13,12 +13,16 @@ import com.generic.rest.core.controller.BaseApiRestController;
 @RequestMapping(CONTROLLER.USER.PATH)
 public class UserController extends BaseApiRestController<User, UserService>{
 	
-	@Autowired
 	private UserService userService;
 
 	@Override
 	public UserService getService() {
 		return userService;
+	}
+
+	@Autowired
+	public void setUserService(UserService userService) {
+		this.userService = userService;
 	}
     
 }
